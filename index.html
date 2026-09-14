@@ -23,13 +23,19 @@
   box-sizing: border-box;
 }
 
+html,
 body {
-
+  width: 100%;
+  height: 100%;
   margin: 0;
+  overflow: hidden;
+}
+
+body {
 
   min-height: 100vh;
 
-  padding: 22px;
+  padding: 10px;
 
   display: flex;
 
@@ -49,9 +55,15 @@ body {
 }
 
 
+/* =========================
+   整體版面
+========================= */
+
 .app {
 
   width: 100%;
+
+  height: calc(100vh - 20px);
 
   max-width: 1250px;
 
@@ -59,9 +71,9 @@ body {
 
   grid-template-columns:
     minmax(0, 1.4fr)
-    minmax(300px, 0.6fr);
+    minmax(280px, 0.6fr);
 
-  gap: 22px;
+  gap: 14px;
 
 }
 
@@ -72,35 +84,45 @@ body {
 
   border: 1px solid #ded7cc;
 
-  border-radius: 24px;
+  border-radius: 20px;
 
   box-shadow:
-    0 8px 28px
-    rgba(0,0,0,.06);
+    0 6px 20px
+    rgba(0,0,0,.05);
 
 }
 
 
 /* =========================
-   左邊
+   左側
 ========================= */
 
 .main-panel {
 
-  padding: 27px 30px 28px;
+  height: 100%;
+
+  padding: 15px 22px;
 
   text-align: center;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  min-height: 0;
 
 }
 
 
 .title {
 
-  font-size: 32px;
+  font-size: 27px;
 
   font-weight: 900;
 
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 
 }
 
@@ -109,7 +131,9 @@ body {
 
   color: #81796d;
 
-  margin-bottom: 16px;
+  margin-bottom: 7px;
+
+  font-size: 14px;
 
 }
 
@@ -122,9 +146,9 @@ body {
 
   justify-content: center;
 
-  gap: 11px;
+  gap: 9px;
 
-  font-size: 17px;
+  font-size: 15px;
 
   font-weight: 800;
 
@@ -133,17 +157,17 @@ body {
 
 select {
 
-  padding: 9px 15px;
+  padding: 7px 12px;
 
   border: 1px solid #cec5b8;
 
-  border-radius: 11px;
+  border-radius: 9px;
 
   background: white;
 
   color: #39342e;
 
-  font-size: 17px;
+  font-size: 15px;
 
   font-weight: 700;
 
@@ -153,20 +177,23 @@ select {
 
 
 /* =========================
-   轉盤區
+   轉盤
 ========================= */
 
 .wheel-area {
 
   position: relative;
 
-  width: min(540px, 90vw);
+  width: min(
+    56vh,
+    480px
+  );
 
   aspect-ratio: 1;
 
-  margin:
-    18px auto
-    10px;
+  margin: 7px auto 2px;
+
+  flex-shrink: 1;
 
 }
 
@@ -180,8 +207,8 @@ select {
   border-radius: 50%;
 
   box-shadow:
-    0 14px 30px
-    rgba(0,0,0,.15);
+    0 10px 22px
+    rgba(0,0,0,.13);
 
 }
 
@@ -209,23 +236,22 @@ select {
 
   left: 50%;
 
-  top: -3px;
+  top: -2px;
 
-  transform:
-    translateX(-50%);
+  transform: translateX(-50%);
 
   width: 0;
 
   height: 0;
 
   border-left:
-    24px solid transparent;
+    20px solid transparent;
 
   border-right:
-    24px solid transparent;
+    20px solid transparent;
 
   border-top:
-    50px solid #50483e;
+    40px solid #50483e;
 
   border-bottom: 0;
 
@@ -233,8 +259,8 @@ select {
 
   filter:
     drop-shadow(
-      0 3px 2px
-      rgba(0,0,0,.20)
+      0 2px 2px
+      rgba(0,0,0,.18)
     );
 
 }
@@ -255,23 +281,20 @@ select {
   transform:
     translate(-50%, -50%);
 
-  width: 94px;
+  width: 78px;
 
-  height: 94px;
+  height: 78px;
 
   border-radius: 50%;
 
   border:
-    7px solid
-    #5f564b;
+    6px solid #5f564b;
 
-  background:
-    #fffaf2;
+  background: #fffaf2;
 
-  color:
-    #4a433a;
+  color: #4a433a;
 
-  font-size: 25px;
+  font-size: 21px;
 
   font-weight: 900;
 
@@ -280,8 +303,8 @@ select {
   z-index: 15;
 
   box-shadow:
-    0 5px 15px
-    rgba(0,0,0,.17);
+    0 5px 14px
+    rgba(0,0,0,.15);
 
   transition:
     transform .15s ease,
@@ -337,15 +360,15 @@ select {
   from {
 
     box-shadow:
-      0 5px 15px
-      rgba(0,0,0,.17);
+      0 4px 12px
+      rgba(0,0,0,.14);
 
   }
 
   to {
 
     box-shadow:
-      0 5px 24px
+      0 5px 22px
       rgba(86,72,55,.35);
 
   }
@@ -359,7 +382,7 @@ select {
 
 .result-box {
 
-  min-height: 70px;
+  min-height: 48px;
 
   display: flex;
 
@@ -369,30 +392,25 @@ select {
 
   flex-wrap: wrap;
 
-  gap: 10px;
+  gap: 6px;
 
-  margin:
-    3px 0
-    5px;
+  margin: 0;
 
 }
 
 
 .result-card {
 
-  min-width: 100px;
+  min-width: 78px;
 
-  padding:
-    9px 16px;
+  padding: 5px 10px;
 
-  border-radius: 15px;
+  border-radius: 11px;
 
-  background:
-    #eee6da;
+  background: #eee6da;
 
   border:
-    2px solid
-    #c9baa6;
+    1.5px solid #c9baa6;
 
   animation:
     pop .45s ease;
@@ -402,10 +420,9 @@ select {
 
 .result-order {
 
-  color:
-    #82776a;
+  color: #82776a;
 
-  font-size: 13px;
+  font-size: 10px;
 
   font-weight: 800;
 
@@ -414,9 +431,7 @@ select {
 
 .result-number {
 
-  margin-top: 2px;
-
-  font-size: 28px;
+  font-size: 20px;
 
   font-weight: 900;
 
@@ -427,22 +442,19 @@ select {
 
   0% {
 
-    transform:
-      scale(.65);
+    transform: scale(.65);
 
   }
 
   65% {
 
-    transform:
-      scale(1.13);
+    transform: scale(1.13);
 
   }
 
   100% {
 
-    transform:
-      scale(1);
+    transform: scale(1);
 
   }
 
@@ -455,14 +467,13 @@ select {
 
 .status {
 
-  min-height: 27px;
+  min-height: 20px;
 
-  margin-top: 5px;
+  margin-top: 1px;
 
-  color:
-    #71695f;
+  color: #71695f;
 
-  font-size: 17px;
+  font-size: 13px;
 
   font-weight: 800;
 
@@ -471,34 +482,45 @@ select {
 
 .hint {
 
-  margin-top: 6px;
+  margin-top: 1px;
 
-  color:
-    #aaa197;
+  color: #aaa197;
 
-  font-size: 13px;
+  font-size: 10px;
 
 }
 
 
 /* =========================
-   右邊
+   右側
 ========================= */
 
 .side {
 
-  display: flex;
+  height: 100%;
 
-  flex-direction: column;
+  display: grid;
 
-  gap: 15px;
+  grid-template-rows:
+    auto
+    1fr
+    1fr
+    auto;
+
+  gap: 9px;
+
+  min-height: 0;
 
 }
 
 
 .side-panel {
 
-  padding: 20px;
+  padding: 12px;
+
+  min-height: 0;
+
+  overflow: hidden;
 
 }
 
@@ -507,16 +529,15 @@ select {
 
   display: flex;
 
-  justify-content:
-    space-between;
+  justify-content: space-between;
 
   align-items: center;
 
-  gap: 10px;
+  gap: 8px;
 
-  margin-bottom: 13px;
+  margin-bottom: 7px;
 
-  font-size: 18px;
+  font-size: 14px;
 
   font-weight: 900;
 
@@ -524,7 +545,7 @@ select {
 
 
 /* =========================
-   座號
+   座號區
 ========================= */
 
 .number-list {
@@ -533,27 +554,27 @@ select {
 
   flex-wrap: wrap;
 
-  gap: 8px;
+  gap: 5px;
 
 }
 
 
 .number-chip {
 
-  min-width: 50px;
+  min-width: 40px;
 
-  padding: 9px 10px;
+  padding: 6px 7px;
 
-  border-radius: 11px;
+  border-radius: 8px;
 
-  background:
-    #f1ede5;
+  background: #f1ede5;
 
   border:
-    1px solid
-    #ddd4c7;
+    1px solid #ddd4c7;
 
   text-align: center;
+
+  font-size: 12px;
 
   font-weight: 800;
 
@@ -562,14 +583,11 @@ select {
 
 .number-chip.drawn {
 
-  background:
-    #e5e2dc;
+  background: #e5e2dc;
 
-  color:
-    #99938a;
+  color: #99938a;
 
-  text-decoration:
-    line-through;
+  text-decoration: line-through;
 
 }
 
@@ -584,27 +602,27 @@ select {
 
   flex-wrap: wrap;
 
-  gap: 7px;
+  gap: 5px;
 
 }
 
 
 .absence-btn {
 
-  min-width: 49px;
+  min-width: 40px;
 
-  padding: 8px 9px;
+  padding: 6px 7px;
 
-  border-radius: 10px;
+  border-radius: 8px;
 
   border:
-    1px solid
-    #d3cabd;
+    1px solid #d3cabd;
 
   background: white;
 
-  color:
-    #39342e;
+  color: #39342e;
+
+  font-size: 12px;
 
   font-weight: 800;
 
@@ -615,30 +633,25 @@ select {
 
 .absence-btn:hover {
 
-  background:
-    #f3eee5;
+  background: #f3eee5;
 
 }
 
 
 .absence-btn.excluded {
 
-  background:
-    #d7d2ca;
+  background: #d7d2ca;
 
-  color:
-    #77716a;
+  color: #77716a;
 
-  text-decoration:
-    line-through;
+  text-decoration: line-through;
 
 }
 
 
 .absence-btn:disabled {
 
-  cursor:
-    not-allowed;
+  cursor: not-allowed;
 
 }
 
@@ -649,18 +662,16 @@ select {
 
 .restore-btn {
 
-  padding:
-    7px 10px;
+  padding: 4px 7px;
 
   border:
-    1px solid
-    #cdc3b5;
+    1px solid #cdc3b5;
 
-  border-radius: 9px;
+  border-radius: 7px;
 
   background: white;
 
-  font-size: 13px;
+  font-size: 10px;
 
   font-weight: 800;
 
@@ -673,21 +684,20 @@ select {
 
   opacity: .4;
 
-  cursor:
-    not-allowed;
+  cursor: not-allowed;
 
 }
 
 
 /* =========================
-   下方按鈕
+   下方操作
 ========================= */
 
 .actions {
 
   display: flex;
 
-  gap: 9px;
+  gap: 6px;
 
 }
 
@@ -696,21 +706,18 @@ select {
 
   flex: 1;
 
-  padding:
-    13px 8px;
+  padding: 9px 5px;
 
   border:
-    1px solid
-    #cdc4b7;
+    1px solid #cdc4b7;
 
-  border-radius: 12px;
+  border-radius: 9px;
 
   background: white;
 
-  color:
-    #39342e;
+  color: #39342e;
 
-  font-size: 14px;
+  font-size: 11px;
 
   font-weight: 800;
 
@@ -721,8 +728,7 @@ select {
 
 .action-btn:hover {
 
-  background:
-    #f5f1e9;
+  background: #f5f1e9;
 
 }
 
@@ -731,70 +737,7 @@ select {
 
   opacity: .4;
 
-  cursor:
-    not-allowed;
-
-}
-
-
-/* =========================
-   手機
-========================= */
-
-@media
-(max-width: 850px) {
-
-  body {
-
-    padding: 12px;
-
-  }
-
-
-  .app {
-
-    grid-template-columns:
-      1fr;
-
-  }
-
-
-  .main-panel {
-
-    padding:
-      22px 15px;
-
-  }
-
-
-  .title {
-
-    font-size:
-      27px;
-
-  }
-
-
-  .wheel-area {
-
-    width:
-      min(
-        500px,
-        92vw
-      );
-
-  }
-
-
-  .go-button {
-
-    width: 82px;
-
-    height: 82px;
-
-    font-size: 22px;
-
-  }
+  cursor: not-allowed;
 
 }
 
@@ -817,50 +760,34 @@ select {
 
 
   <div class="title">
-
     班級座號轉盤
-
   </div>
 
 
   <div class="subtitle">
-
     1～11 號｜抽過不重複
-
   </div>
 
 
   <div class="settings">
 
     <span>
-
       這次要抽
-
     </span>
 
 
     <select id="drawCount">
 
       <option value="1">1 位</option>
-
       <option value="2">2 位</option>
-
       <option value="3">3 位</option>
-
       <option value="4">4 位</option>
-
       <option value="5">5 位</option>
-
       <option value="6">6 位</option>
-
       <option value="7">7 位</option>
-
       <option value="8">8 位</option>
-
       <option value="9">9 位</option>
-
       <option value="10">10 位</option>
-
       <option value="11">11 位</option>
 
     </select>
@@ -868,14 +795,10 @@ select {
   </div>
 
 
-  <!-- 轉盤 -->
-
   <div class="wheel-area">
 
 
-    <div
-      class="wheel-shadow">
-    </div>
+    <div class="wheel-shadow"></div>
 
 
     <canvas
@@ -885,9 +808,7 @@ select {
     </canvas>
 
 
-    <div
-      class="pointer">
-    </div>
+    <div class="pointer"></div>
 
 
     <button
@@ -902,8 +823,6 @@ select {
 
   </div>
 
-
-  <!-- 抽籤結果 -->
 
   <div
     class="result-box"
@@ -922,7 +841,7 @@ select {
 
   <div class="hint">
 
-    點擊中間的 GO 開始轉盤
+    點擊中間 GO 開始轉盤
 
   </div>
 
@@ -940,18 +859,14 @@ select {
 
   <!-- 今日不參與 -->
 
-  <section
-    class="panel side-panel">
+  <section class="panel side-panel">
 
 
-    <div
-      class="section-title">
+    <div class="section-title">
 
 
       <span>
-
         今日不參與
-
       </span>
 
 
@@ -980,18 +895,14 @@ select {
 
   <!-- 尚未抽到 -->
 
-  <section
-    class="panel side-panel">
+  <section class="panel side-panel">
 
 
-    <div
-      class="section-title">
+    <div class="section-title">
 
 
       <span>
-
         尚未抽到
-
       </span>
 
 
@@ -1018,18 +929,14 @@ select {
 
   <!-- 已抽過 -->
 
-  <section
-    class="panel side-panel">
+  <section class="panel side-panel">
 
 
-    <div
-      class="section-title">
+    <div class="section-title">
 
 
       <span>
-
         已抽過
-
       </span>
 
 
@@ -1101,18 +1008,17 @@ const TOTAL = 11;
 
 
 /*
-  每次轉動 10 秒
+  每位轉 10 秒
 */
 
 const SPIN_TIME = 10000;
 
 
 /*
-  抽多人時，
-  每一位之間停 1.5 秒
+  多人抽籤間隔
 */
 
-const BETWEEN_SPINS = 1500;
+const BETWEEN_SPINS = 1200;
 
 
 
@@ -1135,87 +1041,59 @@ let isDrawing = false;
 ========================= */
 
 const wheel =
-  document.getElementById(
-    "wheel"
-  );
+  document.getElementById("wheel");
 
 
 const ctx =
-  wheel.getContext(
-    "2d"
-  );
+  wheel.getContext("2d");
 
 
 const goButton =
-  document.getElementById(
-    "goButton"
-  );
+  document.getElementById("goButton");
 
 
 const drawCount =
-  document.getElementById(
-    "drawCount"
-  );
+  document.getElementById("drawCount");
 
 
 const resetBtn =
-  document.getElementById(
-    "resetBtn"
-  );
+  document.getElementById("resetBtn");
 
 
 const putBackBtn =
-  document.getElementById(
-    "putBackBtn"
-  );
+  document.getElementById("putBackBtn");
 
 
 const restoreAllBtn =
-  document.getElementById(
-    "restoreAllBtn"
-  );
+  document.getElementById("restoreAllBtn");
 
 
 const absenceList =
-  document.getElementById(
-    "absenceList"
-  );
+  document.getElementById("absenceList");
 
 
 const remainingList =
-  document.getElementById(
-    "remainingList"
-  );
+  document.getElementById("remainingList");
 
 
 const drawnList =
-  document.getElementById(
-    "drawnList"
-  );
+  document.getElementById("drawnList");
 
 
 const remainingCount =
-  document.getElementById(
-    "remainingCount"
-  );
+  document.getElementById("remainingCount");
 
 
 const drawnCount =
-  document.getElementById(
-    "drawnCount"
-  );
+  document.getElementById("drawnCount");
 
 
 const resultBox =
-  document.getElementById(
-    "resultBox"
-  );
+  document.getElementById("resultBox");
 
 
 const status =
-  document.getElementById(
-    "status"
-  );
+  document.getElementById("status");
 
 
 
@@ -1227,10 +1105,7 @@ function sleep(ms) {
 
   return new Promise(
     resolve =>
-      setTimeout(
-        resolve,
-        ms
-      )
+      setTimeout(resolve, ms)
   );
 
 }
@@ -1238,7 +1113,7 @@ function sleep(ms) {
 
 
 /* =========================
-   可抽的人
+   可抽座號
 ========================= */
 
 function getAvailableNumbers() {
@@ -1246,10 +1121,7 @@ function getAvailableNumbers() {
   return remaining.filter(
 
     number =>
-
-      !excluded.includes(
-        number
-      )
+      !excluded.includes(number)
 
   );
 
@@ -1288,6 +1160,7 @@ function drawWheel() {
   );
 
 
+
   if (
     numbers.length === 0
   ) {
@@ -1317,7 +1190,7 @@ function drawWheel() {
 
 
     ctx.font =
-      "bold 42px Microsoft JhengHei";
+      "bold 40px Microsoft JhengHei";
 
 
     ctx.textAlign =
@@ -1331,7 +1204,7 @@ function drawWheel() {
     ctx.fillText(
       "無可抽座號",
       center,
-      center - 120
+      center - 110
     );
 
 
@@ -1342,16 +1215,10 @@ function drawWheel() {
 
 
   const slice =
-    (
-      Math.PI * 2
-    ) /
+    (Math.PI * 2) /
     numbers.length;
 
 
-
-  /*
-    奶茶三色
-  */
 
   const colors = [
 
@@ -1421,8 +1288,6 @@ function drawWheel() {
 
 
 
-      /* 分隔線 */
-
       ctx.strokeStyle =
         "#FFFDF8";
 
@@ -1435,10 +1300,7 @@ function drawWheel() {
 
 
 
-      /* =================
-         座號文字
-      ================= */
-
+      /* 座號 */
 
       const middleAngle =
 
@@ -1577,7 +1439,7 @@ function drawWheel() {
 
 
 /* =========================
-   重設轉盤角度
+   重設角度
 ========================= */
 
 function resetWheelAngle() {
@@ -1601,7 +1463,7 @@ function resetWheelAngle() {
 
 
 /* =========================
-   今日不參與按鈕
+   今日不參與
 ========================= */
 
 function renderAbsenceButtons() {
@@ -1638,9 +1500,7 @@ function renderAbsenceButtons() {
 
 
     if (
-      excluded.includes(
-        number
-      )
+      excluded.includes(number)
     ) {
 
 
@@ -1662,9 +1522,7 @@ function renderAbsenceButtons() {
       "click",
 
       () =>
-        toggleExcluded(
-          number
-        )
+        toggleExcluded(number)
 
     );
 
@@ -1680,7 +1538,7 @@ function renderAbsenceButtons() {
 
 
 /* =========================
-   更新畫面
+   畫面更新
 ========================= */
 
 function render() {
@@ -1856,7 +1714,7 @@ function render() {
 
 
 /* =========================
-   不參與
+   切換不參與
 ========================= */
 
 function toggleExcluded(
@@ -1875,9 +1733,7 @@ function toggleExcluded(
 
 
   if (
-    drawn.includes(
-      number
-    )
+    drawn.includes(number)
   ) {
 
 
@@ -2001,8 +1857,8 @@ async function spinOne(
 
 
   /* =========================
-     隨機決定轉多少
-     不預先決定中獎號碼
+     隨機轉圈
+     不先決定座號
   ========================= */
 
 
@@ -2016,19 +1872,13 @@ async function spinOne(
 
 
   /*
-    6～9 圈
+    隨機停在任意角度
   */
-
 
   const randomStopAngle =
 
     Math.random() * 360;
 
-
-  /*
-    隨機停在 0～360
-    任意角度
-  */
 
 
   const totalRotation =
@@ -2049,7 +1899,6 @@ async function spinOne(
      慢慢減速
   ========================= */
 
-
   wheel.style.transition =
 
     `transform ${SPIN_TIME}ms cubic-bezier(0.08, 0.72, 0.08, 1)`;
@@ -2068,10 +1917,6 @@ async function spinOne(
 
 
 
-  /*
-    等到完全停下
-  */
-
   await sleep(
     SPIN_TIME + 250
   );
@@ -2079,8 +1924,7 @@ async function spinOne(
 
 
   /* =========================
-     停完後才判斷
-     箭頭指到哪一格
+     停下後再辨識座號
   ========================= */
 
 
@@ -2098,13 +1942,14 @@ async function spinOne(
 
 
   /*
-    因為轉盤順時針轉，
-    箭頭固定在正上方，
-    所以反推箭頭在轉盤上
-    對應的角度
+    箭頭固定在最上方
+
+    轉盤順時針旋轉後，
+    要反推箭頭相對原始轉盤
+    指到的角度
   */
 
-  const pointerAngle =
+  const pointerOffset =
 
     (
       360 -
@@ -2113,6 +1958,10 @@ async function spinOne(
     360;
 
 
+
+  /*
+    每格角度
+  */
 
   const sliceDegrees =
 
@@ -2123,27 +1972,18 @@ async function spinOne(
 
 
   /*
-    第一格是以正上方為起點，
-    加半格後判斷所在區域
+    直接判斷所在格
+
+    這裡不加半格，
+    因為每格本身就是
+    從正上方邊界開始畫
   */
-
-  const adjustedAngle =
-
-    (
-      pointerAngle +
-
-      sliceDegrees / 2
-    ) %
-
-    360;
-
-
 
   let selectedIndex =
 
     Math.floor(
 
-      adjustedAngle /
+      pointerOffset /
 
       sliceDegrees
 
@@ -2151,14 +1991,11 @@ async function spinOne(
 
 
 
-  if (
-    selectedIndex >=
-    numbers.length
-  ) {
+  selectedIndex =
 
-    selectedIndex = 0;
+    selectedIndex %
 
-  }
+    numbers.length;
 
 
 
@@ -2367,9 +2204,9 @@ async function startDraw() {
 
 
 
-  /* =================
+  /* =========================
      一位一位抽
-  ================= */
+  ========================= */
 
 
   for (
@@ -2391,10 +2228,6 @@ async function startDraw() {
     ) {
 
 
-      /*
-        先讓學生看到上一位結果
-      */
-
       await sleep(
         BETWEEN_SPINS
       );
@@ -2402,10 +2235,9 @@ async function startDraw() {
 
 
       /*
-        下一位開始前，
-        重畫轉盤
-
-        剛剛抽中的座號會消失
+        下一位之前，
+        移除剛才抽中的人
+        再重畫轉盤
       */
 
       resetWheelAngle();
@@ -2415,7 +2247,7 @@ async function startDraw() {
 
 
       await sleep(
-        500
+        350
       );
 
     }
@@ -2424,9 +2256,9 @@ async function startDraw() {
 
 
 
-  /* =================
-     全部完成
-  ================= */
+  /* =========================
+     完成
+  ========================= */
 
 
   isDrawing =
@@ -2448,19 +2280,14 @@ async function startDraw() {
 
 
   /*
-    最後先讓轉盤停著
-    讓大家看一下
+    最後結果保留一下
   */
 
   await sleep(
-    900
+    600
   );
 
 
-
-  /*
-    再更新下一輪轉盤
-  */
 
   resetWheelAngle();
 
@@ -2687,7 +2514,7 @@ function initialize() {
 
 
 /* =========================
-   按鈕
+   按鈕事件
 ========================= */
 
 goButton.addEventListener(
