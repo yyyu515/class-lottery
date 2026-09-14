@@ -1,351 +1,479 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>班級座號抽籤</title>
+<title>班級座號轉盤抽籤</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+<style>
+* {
+  box-sizing: border-box;
+}
 
-    body {
-      margin: 0;
-      font-family: "Noto Sans TC", "Microsoft JhengHei", sans-serif;
-      background: #f6f3ec;
-      color: #3e3a35;
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 24px;
-    }
+body {
+  margin: 0;
+  min-height: 100vh;
+  padding: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-    .app {
-      width: 100%;
-      max-width: 1180px;
-      display: grid;
-      grid-template-columns: 1.25fr 0.75fr;
-      gap: 24px;
-    }
+  font-family:
+    "Noto Sans TC",
+    "Microsoft JhengHei",
+    sans-serif;
 
-    .panel {
-      background: #ffffff;
-      border: 1px solid #ddd7cc;
-      border-radius: 24px;
-      padding: 24px;
-      box-shadow: 0 6px 24px rgba(0,0,0,0.05);
-    }
+  background: #f5f1e8;
+  color: #39352f;
+}
 
-    .main-panel {
-      text-align: center;
-      padding: 32px;
-    }
+.app {
+  width: 100%;
+  max-width: 1250px;
 
-    .title {
-      font-size: 32px;
-      font-weight: 800;
-      margin-bottom: 6px;
-    }
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(300px, 0.6fr);
+  gap: 22px;
+}
 
-    .subtitle {
-      color: #7a746b;
-      margin-bottom: 28px;
-    }
+.panel {
+  background: white;
+  border: 1px solid #ded8cc;
+  border-radius: 24px;
+  box-shadow: 0 8px 30px rgba(0,0,0,.06);
+}
 
-    /* 抽幾位 */
+.main-panel {
+  padding: 26px 30px 30px;
+  text-align: center;
+}
 
-    .draw-settings {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 25px;
-      font-size: 18px;
-      font-weight: 700;
-    }
+.title {
+  font-size: 31px;
+  font-weight: 900;
+  margin-bottom: 4px;
+}
 
-    select {
-      font-size: 18px;
-      padding: 10px 16px;
-      border: 1px solid #cfc7bb;
-      border-radius: 10px;
-      background: white;
-      color: #3e3a35;
-      cursor: pointer;
-    }
+.subtitle {
+  color: #81796d;
+  margin-bottom: 15px;
+}
 
-    /* 抽籤結果 */
+.settings {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
 
-    .result-area {
-      min-height: 340px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      align-content: center;
-      flex-wrap: wrap;
-      gap: 22px;
-      padding: 20px;
-    }
+  gap: 10px;
 
-    .result-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 9px;
-    }
+  font-size: 17px;
+  font-weight: 800;
+}
 
-    .result-order {
-      font-size: 19px;
-      font-weight: 800;
-      color: #756957;
-    }
+select {
+  border: 1px solid #cfc6b8;
+  border-radius: 11px;
 
-    .number-circle {
-      width: 130px;
-      height: 130px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #eee8dc;
-      border: 5px solid #c6baa6;
-      font-size: 58px;
-      font-weight: 900;
-      transition: 0.15s;
-    }
+  padding: 9px 14px;
 
-    .number-circle.rolling {
-      transform: scale(1.05);
-    }
+  background: white;
 
-    .number-circle.final {
-      animation: pop 0.45s ease;
-      background: #e4dccd;
-      border-color: #9f907a;
-    }
+  font-size: 16px;
+  font-weight: 700;
+  color: #39352f;
+}
 
-    .question {
-      width: 210px;
-      height: 210px;
-      font-size: 95px;
-    }
+/* =========================
+   轉盤
+========================= */
 
-    @keyframes pop {
-      0% {
-        transform: scale(0.7);
-      }
+.wheel-area {
+  position: relative;
 
-      60% {
-        transform: scale(1.13);
-      }
+  width: min(540px, 90vw);
+  aspect-ratio: 1;
 
-      100% {
-        transform: scale(1);
-      }
-    }
+  margin: 14px auto 8px;
+}
 
-    /* 主按鈕 */
+.wheel-shadow {
+  position: absolute;
+  inset: 5.5%;
 
-    .draw-btn {
-      width: 100%;
-      border: none;
-      border-radius: 16px;
-      padding: 18px;
-      margin-top: 10px;
-      font-size: 24px;
-      font-weight: 800;
-      background: #756957;
-      color: white;
-      cursor: pointer;
-    }
+  border-radius: 50%;
 
-    .draw-btn:hover {
-      opacity: 0.9;
-    }
+  box-shadow:
+    0 12px 30px rgba(0,0,0,.13);
+}
 
-    .draw-btn:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-    }
+#wheel {
+  width: 100%;
+  height: 100%;
 
-    .status {
-      margin-top: 16px;
-      min-height: 25px;
-      font-size: 17px;
-      color: #777168;
-    }
+  display: block;
 
-    .hint {
-      margin-top: 16px;
-      font-size: 13px;
-      color: #999289;
-    }
+  transform: rotate(0deg);
+  transition:
+    transform 5.5s
+    cubic-bezier(.12,.72,.08,1);
+}
 
-    /* 右側 */
+/* 上方指針 */
 
-    .side {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
+.pointer {
+  position: absolute;
 
-    .section-title {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 14px;
-      font-size: 18px;
-      font-weight: 800;
-    }
+  left: 50%;
+  top: 0;
 
-    .number-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 9px;
-    }
+  transform: translateX(-50%);
 
-    .number-chip {
-      min-width: 52px;
-      padding: 9px 10px;
-      border-radius: 11px;
-      text-align: center;
-      font-weight: 800;
-      background: #f1ede5;
-      border: 1px solid #ded6c9;
-    }
+  width: 0;
+  height: 0;
 
-    .number-chip.drawn {
-      color: #99948d;
-      background: #e6e3dd;
-      text-decoration: line-through;
-    }
+  border-left: 23px solid transparent;
+  border-right: 23px solid transparent;
+  border-top: 0;
+  border-bottom: 48px solid #4f483f;
 
-    /* 不參與區 */
+  z-index: 10;
 
-    .absence-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
+  filter: drop-shadow(0 3px 2px rgba(0,0,0,.18));
+}
 
-    .absence-btn {
-      min-width: 52px;
-      padding: 9px 10px;
-      border-radius: 11px;
-      border: 1px solid #d6cec2;
-      background: white;
-      color: #3e3a35;
-      font-weight: 800;
-      cursor: pointer;
-    }
+/* 中心圓 */
 
-    .absence-btn:hover {
-      background: #f1ede5;
-    }
+.wheel-center {
+  position: absolute;
 
-    .absence-btn.excluded {
-      background: #d8d3cb;
-      color: #777168;
-      text-decoration: line-through;
-    }
+  left: 50%;
+  top: 50%;
 
-    .restore-btn {
-      padding: 7px 10px;
-      border-radius: 9px;
-      border: 1px solid #cfc7bb;
-      background: white;
-      font-size: 13px;
-      font-weight: 700;
-      cursor: pointer;
-    }
+  transform: translate(-50%,-50%);
 
-    .restore-btn:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-    }
+  width: 86px;
+  height: 86px;
 
-    /* 底部操作 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-    .actions {
-      display: flex;
-      gap: 10px;
-    }
+  border-radius: 50%;
 
-    .action-btn {
-      flex: 1;
-      padding: 13px;
-      border-radius: 12px;
-      border: 1px solid #cfc7bb;
-      background: white;
-      font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-    }
+  background: #fffdf8;
+  border: 8px solid #655d52;
 
-    .action-btn:hover {
-      background: #f5f1ea;
-    }
+  font-size: 20px;
+  font-weight: 900;
 
-    .action-btn:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-    }
+  z-index: 8;
 
-    @media (max-width: 800px) {
-      .app {
-        grid-template-columns: 1fr;
-      }
+  box-shadow: 0 4px 15px rgba(0,0,0,.14);
+}
 
-      .result-area {
-        min-height: 220px;
-      }
+/* =========================
+   結果
+========================= */
 
-      .number-circle {
-        width: 105px;
-        height: 105px;
-        font-size: 46px;
-      }
+.result-box {
+  min-height: 72px;
 
-      .question {
-        width: 160px;
-        height: 160px;
-        font-size: 70px;
-      }
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
 
-      .actions {
-        flex-direction: column;
-      }
-    }
-  </style>
+  gap: 10px;
+
+  margin: 4px 0 12px;
+}
+
+.result-card {
+  min-width: 98px;
+
+  padding: 9px 15px;
+
+  border-radius: 15px;
+
+  background: #f0eadf;
+  border: 2px solid #c9bdac;
+
+  animation: pop .45s ease;
+}
+
+.result-order {
+  font-size: 13px;
+  color: #82786b;
+  font-weight: 800;
+}
+
+.result-number {
+  font-size: 27px;
+  font-weight: 900;
+}
+
+@keyframes pop {
+
+  0% {
+    transform: scale(.65);
+  }
+
+  65% {
+    transform: scale(1.12);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+
+}
+
+/* =========================
+   開始按鈕
+========================= */
+
+.draw-btn {
+  width: 100%;
+
+  padding: 17px;
+
+  border: 0;
+  border-radius: 16px;
+
+  background: #655d52;
+  color: white;
+
+  font-size: 23px;
+  font-weight: 900;
+
+  cursor: pointer;
+}
+
+.draw-btn:hover {
+  opacity: .92;
+}
+
+.draw-btn:disabled {
+  opacity: .4;
+  cursor: not-allowed;
+}
+
+.status {
+  margin-top: 13px;
+
+  min-height: 25px;
+
+  color: #756e65;
+  font-weight: 700;
+}
+
+.hint {
+  margin-top: 7px;
+
+  color: #aaa197;
+  font-size: 13px;
+}
+
+/* =========================
+   右側
+========================= */
+
+.side {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.side-panel {
+  padding: 20px;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 10px;
+
+  margin-bottom: 13px;
+
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.number-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.number-chip {
+  min-width: 50px;
+
+  padding: 9px 10px;
+
+  border-radius: 11px;
+
+  background: #f1ede5;
+  border: 1px solid #ddd4c7;
+
+  text-align: center;
+  font-weight: 800;
+}
+
+.number-chip.drawn {
+  background: #e5e2dc;
+  color: #99938a;
+
+  text-decoration: line-through;
+}
+
+/* =========================
+   今日不參與
+========================= */
+
+.absence-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.absence-btn {
+  min-width: 49px;
+
+  padding: 8px 9px;
+
+  border-radius: 10px;
+
+  border: 1px solid #d3cabd;
+  background: white;
+
+  color: #39352f;
+  font-weight: 800;
+
+  cursor: pointer;
+}
+
+.absence-btn:hover {
+  background: #f3eee5;
+}
+
+.absence-btn.excluded {
+  background: #d7d2ca;
+  color: #77716a;
+
+  text-decoration: line-through;
+}
+
+.restore-btn {
+  padding: 7px 10px;
+
+  border: 1px solid #cdc3b5;
+  border-radius: 9px;
+
+  background: white;
+
+  font-size: 13px;
+  font-weight: 800;
+
+  cursor: pointer;
+}
+
+.restore-btn:disabled {
+  opacity: .4;
+  cursor: not-allowed;
+}
+
+/* =========================
+   其他按鈕
+========================= */
+
+.actions {
+  display: flex;
+  gap: 9px;
+}
+
+.action-btn {
+  flex: 1;
+
+  padding: 13px 8px;
+
+  border: 1px solid #cdc4b7;
+  border-radius: 12px;
+
+  background: white;
+
+  font-size: 14px;
+  font-weight: 800;
+
+  cursor: pointer;
+}
+
+.action-btn:hover {
+  background: #f5f1e9;
+}
+
+.action-btn:disabled {
+  opacity: .4;
+  cursor: not-allowed;
+}
+
+@media (max-width: 850px) {
+
+  body {
+    padding: 12px;
+  }
+
+  .app {
+    grid-template-columns: 1fr;
+  }
+
+  .wheel-area {
+    width: min(500px, 92vw);
+  }
+
+  .main-panel {
+    padding: 22px 15px;
+  }
+
+  .title {
+    font-size: 26px;
+  }
+
+}
+
+</style>
 </head>
 
 <body>
 
 <div class="app">
 
-  <!-- 左側抽籤 -->
+  <!-- =====================
+       左側轉盤
+  ====================== -->
 
-  <section class="panel main-panel">
+  <main class="panel main-panel">
 
     <div class="title">
-      班級座號抽籤
+      班級座號轉盤
     </div>
 
     <div class="subtitle">
       1～11 號｜抽過不重複
     </div>
 
-    <div class="draw-settings">
 
-      <label for="drawCount">
+    <div class="settings">
+
+      <span>
         這次要抽
-      </label>
+      </span>
 
       <select id="drawCount">
+
         <option value="1">1 位</option>
         <option value="2">2 位</option>
         <option value="3">3 位</option>
@@ -357,17 +485,34 @@
         <option value="9">9 位</option>
         <option value="10">10 位</option>
         <option value="11">11 位</option>
+
       </select>
 
     </div>
 
 
-    <div class="result-area" id="resultArea">
+    <div class="wheel-area">
 
-      <div class="number-circle question">
-        ？
+      <div class="wheel-shadow"></div>
+
+      <canvas
+        id="wheel"
+        width="700"
+        height="700">
+      </canvas>
+
+      <div class="pointer"></div>
+
+      <div class="wheel-center">
+        GO
       </div>
 
+    </div>
+
+
+    <div
+      class="result-box"
+      id="resultBox">
     </div>
 
 
@@ -375,7 +520,7 @@
       class="draw-btn"
       id="drawBtn">
 
-      🎲 開始抽籤
+      🎯 開始轉盤
 
     </button>
 
@@ -390,20 +535,22 @@
 
 
     <div class="hint">
-      多人抽籤會依序開出，第 1 位 → 第 2 位 → 第 3 位……
+      多人抽籤會一位一位轉出來
     </div>
 
-  </section>
+  </main>
 
 
-  <!-- 右側 -->
+  <!-- =====================
+       右側
+  ====================== -->
 
-  <div class="side">
+  <aside class="side">
 
 
-    <!-- 不參與 -->
+    <!-- 今日不參與 -->
 
-    <section class="panel">
+    <section class="panel side-panel">
 
       <div class="section-title">
 
@@ -412,7 +559,6 @@
         </span>
 
         <button
-          type="button"
           class="restore-btn"
           id="restoreAllBtn">
 
@@ -433,7 +579,7 @@
 
     <!-- 尚未抽到 -->
 
-    <section class="panel">
+    <section class="panel side-panel">
 
       <div class="section-title">
 
@@ -458,7 +604,7 @@
 
     <!-- 已抽過 -->
 
-    <section class="panel">
+    <section class="panel side-panel">
 
       <div class="section-title">
 
@@ -505,21 +651,22 @@
 
     </div>
 
-  </div>
+  </aside>
 
 </div>
 
 
 <script>
 
+/* =========================
+   基本設定
+========================= */
+
 const TOTAL = 11;
 
-const ROLLING_TIME = 2000;
+const SPIN_TIME = 5500;
 
-const BETWEEN_TIME = 900;
-
-const ROLL_SPEED = 85;
-
+const BETWEEN_SPINS = 1300;
 
 let remaining = [];
 
@@ -529,14 +676,26 @@ let excluded = [];
 
 let lastRound = [];
 
+let currentRotation = 0;
+
 let isDrawing = false;
 
 
-const resultArea =
-  document.getElementById("resultArea");
+/* =========================
+   DOM
+========================= */
+
+const wheel =
+  document.getElementById("wheel");
+
+const ctx =
+  wheel.getContext("2d");
 
 const drawBtn =
   document.getElementById("drawBtn");
+
+const drawCount =
+  document.getElementById("drawCount");
 
 const resetBtn =
   document.getElementById("resetBtn");
@@ -547,8 +706,8 @@ const putBackBtn =
 const restoreAllBtn =
   document.getElementById("restoreAllBtn");
 
-const drawCount =
-  document.getElementById("drawCount");
+const absenceList =
+  document.getElementById("absenceList");
 
 const remainingList =
   document.getElementById("remainingList");
@@ -556,18 +715,22 @@ const remainingList =
 const drawnList =
   document.getElementById("drawnList");
 
-const absenceList =
-  document.getElementById("absenceList");
-
 const remainingCount =
   document.getElementById("remainingCount");
 
 const drawnCount =
   document.getElementById("drawnCount");
 
+const resultBox =
+  document.getElementById("resultBox");
+
 const status =
   document.getElementById("status");
 
+
+/* =========================
+   小工具
+========================= */
 
 function sleep(ms) {
 
@@ -589,93 +752,294 @@ function getAvailableNumbers() {
 }
 
 
-function initializeAll() {
+/* =========================
+   畫轉盤
+========================= */
 
-  remaining = [];
+function drawWheel() {
 
-  for (
-    let i = 1;
-    i <= TOTAL;
-    i++
+  const numbers =
+    getAvailableNumbers();
+
+
+  const size =
+    wheel.width;
+
+  const center =
+    size / 2;
+
+  const radius =
+    center - 18;
+
+
+  ctx.clearRect(
+    0,
+    0,
+    size,
+    size
+  );
+
+
+  /* 沒有人可以抽 */
+
+  if (
+    numbers.length === 0
   ) {
 
-    remaining.push(i);
+    ctx.beginPath();
+
+    ctx.arc(
+      center,
+      center,
+      radius,
+      0,
+      Math.PI * 2
+    );
+
+    ctx.fillStyle =
+      "#e7e2d9";
+
+    ctx.fill();
+
+
+    ctx.fillStyle =
+      "#777168";
+
+    ctx.font =
+      "bold 42px Microsoft JhengHei";
+
+    ctx.textAlign =
+      "center";
+
+    ctx.textBaseline =
+      "middle";
+
+    ctx.fillText(
+      "無可抽座號",
+      center,
+      center - 120
+    );
+
+    return;
 
   }
 
 
-  drawn = [];
-
-  excluded = [];
-
-  lastRound = [];
-
-  isDrawing = false;
+  const slice =
+    (Math.PI * 2) /
+    numbers.length;
 
 
-  resultArea.innerHTML = `
+  const colors = [
 
-    <div class="number-circle question">
-      ？
-    </div>
+    "#d9c7ad",
+    "#c8d0bd",
+    "#dbc2b9",
+    "#c6cbd4",
+    "#e1d3aa",
+    "#bfcfc9",
+    "#d4c3d1",
+    "#cbbda8",
+    "#c9d6c0",
+    "#dec7ae",
+    "#bdcad0"
 
-  `;
+  ];
 
 
-  drawCount.disabled = false;
+  numbers.forEach(
+    (number, index) => {
 
 
-  render();
+      const startAngle =
+        -Math.PI / 2 +
+        index * slice;
+
+
+      const endAngle =
+        startAngle +
+        slice;
+
+
+      /* 扇形 */
+
+      ctx.beginPath();
+
+      ctx.moveTo(
+        center,
+        center
+      );
+
+      ctx.arc(
+        center,
+        center,
+        radius,
+        startAngle,
+        endAngle
+      );
+
+      ctx.closePath();
+
+
+      ctx.fillStyle =
+        colors[
+          index %
+          colors.length
+        ];
+
+
+      ctx.fill();
+
+
+      ctx.strokeStyle =
+        "#fffdf9";
+
+      ctx.lineWidth =
+        5;
+
+      ctx.stroke();
+
+
+      /* 座號 */
+
+      const middleAngle =
+        startAngle +
+        slice / 2;
+
+
+      const textRadius =
+        radius * 0.72;
+
+
+      const x =
+        center +
+        Math.cos(middleAngle) *
+        textRadius;
+
+
+      const y =
+        center +
+        Math.sin(middleAngle) *
+        textRadius;
+
+
+      ctx.save();
+
+
+      ctx.translate(
+        x,
+        y
+      );
+
+
+      /* 讓字保持直立 */
+
+      ctx.rotate(
+        middleAngle +
+        Math.PI / 2
+      );
+
+
+      ctx.fillStyle =
+        "#38342f";
+
+
+      let fontSize = 46;
+
+
+      if (
+        numbers.length >= 9
+      ) {
+
+        fontSize = 39;
+
+      }
+
+
+      ctx.font =
+        `900 ${fontSize}px Microsoft JhengHei`;
+
+
+      ctx.textAlign =
+        "center";
+
+
+      ctx.textBaseline =
+        "middle";
+
+
+      ctx.fillText(
+        number + "號",
+        0,
+        0
+      );
+
+
+      ctx.restore();
+
+    }
+  );
+
+
+  /* 外框 */
+
+  ctx.beginPath();
+
+  ctx.arc(
+    center,
+    center,
+    radius,
+    0,
+    Math.PI * 2
+  );
+
+  ctx.strokeStyle =
+    "#665e53";
+
+  ctx.lineWidth =
+    9;
+
+  ctx.stroke();
 
 }
 
 
-function resetDrawOnly() {
+/* =========================
+   重置轉盤角度
+========================= */
 
-  remaining = [];
+function resetWheelAngle() {
 
-  for (
-    let i = 1;
-    i <= TOTAL;
-    i++
-  ) {
-
-    remaining.push(i);
-
-  }
+  wheel.style.transition =
+    "none";
 
 
-  drawn = [];
-
-  lastRound = [];
-
-  isDrawing = false;
+  currentRotation = 0;
 
 
-  resultArea.innerHTML = `
-
-    <div class="number-circle question">
-      ？
-    </div>
-
-  `;
+  wheel.style.transform =
+    "rotate(0deg)";
 
 
-  drawCount.disabled = false;
+  /* 強制瀏覽器套用 */
+
+  void wheel.offsetWidth;
 
 
-  render();
-
-
-  status.textContent =
-    "已重新開始，今日不參與設定已保留";
+  wheel.style.transition =
+    "transform 5.5s cubic-bezier(.12,.72,.08,1)";
 
 }
 
+
+/* =========================
+   畫面更新
+========================= */
 
 function renderAbsenceButtons() {
 
-  absenceList.innerHTML = "";
+  absenceList.innerHTML =
+    "";
 
 
   for (
@@ -686,11 +1050,9 @@ function renderAbsenceButtons() {
 
 
     const button =
-      document.createElement("button");
-
-
-    button.type =
-      "button";
+      document.createElement(
+        "button"
+      );
 
 
     button.className =
@@ -741,32 +1103,42 @@ function render() {
     getAvailableNumbers();
 
 
-  remainingList.innerHTML = "";
+  /* 尚未抽到 */
+
+  remainingList.innerHTML =
+    "";
 
 
-  available.forEach(number => {
+  available.forEach(
+    number => {
 
 
-    const chip =
-      document.createElement("div");
+      const chip =
+        document.createElement(
+          "div"
+        );
 
 
-    chip.className =
-      "number-chip";
+      chip.className =
+        "number-chip";
 
 
-    chip.textContent =
-      number + "號";
+      chip.textContent =
+        number + "號";
 
 
-    remainingList.appendChild(
-      chip
-    );
+      remainingList.appendChild(
+        chip
+      );
 
-  });
+    }
+  );
 
 
-  drawnList.innerHTML = "";
+  /* 已抽過 */
+
+  drawnList.innerHTML =
+    "";
 
 
   if (
@@ -781,26 +1153,30 @@ function render() {
   } else {
 
 
-    drawn.forEach(number => {
+    drawn.forEach(
+      number => {
 
 
-      const chip =
-        document.createElement("div");
+        const chip =
+          document.createElement(
+            "div"
+          );
 
 
-      chip.className =
-        "number-chip drawn";
+        chip.className =
+          "number-chip drawn";
 
 
-      chip.textContent =
-        number + "號";
+        chip.textContent =
+          number + "號";
 
 
-      drawnList.appendChild(
-        chip
-      );
+        drawnList.appendChild(
+          chip
+        );
 
-    });
+      }
+    );
 
   }
 
@@ -816,31 +1192,36 @@ function render() {
 
 
   if (
-    available.length === 0
-  ) {
-
-
-    status.textContent =
-      "目前沒有可抽的座號";
-
-
-    drawBtn.disabled =
-      true;
-
-
-  } else if (
     !isDrawing
   ) {
 
 
-    status.textContent =
-      "目前有 " +
-      available.length +
-      " 位可以抽";
+    if (
+      available.length === 0
+    ) {
 
 
-    drawBtn.disabled =
-      false;
+      status.textContent =
+        "目前沒有可抽的座號";
+
+
+      drawBtn.disabled =
+        true;
+
+
+    } else {
+
+
+      status.textContent =
+        "目前有 " +
+        available.length +
+        " 位可以抽";
+
+
+      drawBtn.disabled =
+        false;
+
+    }
 
   }
 
@@ -854,8 +1235,15 @@ function render() {
     excluded.length === 0 ||
     isDrawing;
 
+
+  drawWheel();
+
 }
 
+
+/* =========================
+   今日不參與
+========================= */
 
 function toggleExcluded(number) {
 
@@ -871,7 +1259,7 @@ function toggleExcluded(number) {
 
     alert(
       number +
-      "號已經被抽過。請先重新開始後再設定。"
+      "號已經抽過了，請重新開始後再設定。"
     );
 
 
@@ -903,6 +1291,8 @@ function toggleExcluded(number) {
   }
 
 
+  resetWheelAngle();
+
   render();
 
 }
@@ -918,6 +1308,8 @@ function restoreAll() {
   excluded = [];
 
 
+  resetWheelAngle();
+
   render();
 
 
@@ -927,7 +1319,199 @@ function restoreAll() {
 }
 
 
-async function drawNumbers() {
+/* =========================
+   轉一次
+========================= */
+
+async function spinOne(order) {
+
+  const numbers =
+    getAvailableNumbers();
+
+
+  /*
+    先決定真正會抽到誰
+  */
+
+  const selectedIndex =
+    Math.floor(
+      Math.random() *
+      numbers.length
+    );
+
+
+  const selected =
+    numbers[
+      selectedIndex
+    ];
+
+
+  /*
+    每格角度
+  */
+
+  const sliceDegrees =
+    360 /
+    numbers.length;
+
+
+  /*
+    selectedIndex 那格的中心，
+    要剛好轉到最上方指針。
+
+    轉盤本身第一格從最上方開始，
+    所以中心是：
+
+    (index + 0.5) * 每格角度
+  */
+
+  const desiredRotation =
+    360 -
+    (
+      (
+        selectedIndex +
+        0.5
+      ) *
+      sliceDegrees
+    );
+
+
+  const currentMod =
+    (
+      (
+        currentRotation %
+        360
+      ) +
+      360
+    ) %
+    360;
+
+
+  const desiredMod =
+    (
+      (
+        desiredRotation %
+        360
+      ) +
+      360
+    ) %
+    360;
+
+
+  const extra =
+    (
+      desiredMod -
+      currentMod +
+      360
+    ) %
+    360;
+
+
+  /*
+    多轉 6 圈，再停到正式結果
+  */
+
+  currentRotation =
+    currentRotation +
+    2160 +
+    extra;
+
+
+  status.textContent =
+    "正在抽第 " +
+    order +
+    " 位……";
+
+
+  wheel.style.transform =
+    `rotate(${currentRotation}deg)`;
+
+
+  /*
+    等轉盤停
+  */
+
+  await sleep(
+    SPIN_TIME + 150
+  );
+
+
+  /*
+    正式抽中
+  */
+
+  const remainingIndex =
+    remaining.indexOf(
+      selected
+    );
+
+
+  if (
+    remainingIndex !== -1
+  ) {
+
+    remaining.splice(
+      remainingIndex,
+      1
+    );
+
+  }
+
+
+  drawn.push(
+    selected
+  );
+
+
+  lastRound.push(
+    selected
+  );
+
+
+  /* 顯示結果 */
+
+  const card =
+    document.createElement(
+      "div"
+    );
+
+
+  card.className =
+    "result-card";
+
+
+  card.innerHTML = `
+
+    <div class="result-order">
+      第 ${order} 位
+    </div>
+
+    <div class="result-number">
+      ${selected}號
+    </div>
+
+  `;
+
+
+  resultBox.appendChild(
+    card
+  );
+
+
+  status.textContent =
+    `第 ${order} 位：${selected}號`;
+
+
+  return selected;
+
+}
+
+
+/* =========================
+   開始多人抽籤
+========================= */
+
+async function startDraw() {
 
   if (isDrawing) {
     return;
@@ -966,12 +1550,11 @@ async function drawNumbers() {
 
   lastRound = [];
 
+  resultBox.innerHTML =
+    "";
+
 
   drawBtn.disabled =
-    true;
-
-
-  putBackBtn.disabled =
     true;
 
 
@@ -979,184 +1562,51 @@ async function drawNumbers() {
     true;
 
 
-  resultArea.innerHTML =
-    "";
+  putBackBtn.disabled =
+    true;
+
+
+  restoreAllBtn.disabled =
+    true;
 
 
   renderAbsenceButtons();
 
 
   for (
-    let order = 0;
-    order < amount;
-    order++
+    let i = 1;
+    i <= amount;
+    i++
   ) {
 
 
-    status.textContent =
-      "正在抽第 " +
-      (order + 1) +
-      " 位…";
+    await spinOne(i);
 
 
-    const item =
-      document.createElement(
-        "div"
-      );
-
-
-    item.className =
-      "result-item";
-
-
-    const label =
-      document.createElement(
-        "div"
-      );
-
-
-    label.className =
-      "result-order";
-
-
-    label.textContent =
-      "第 " +
-      (order + 1) +
-      " 位";
-
-
-    const circle =
-      document.createElement(
-        "div"
-      );
-
-
-    circle.className =
-      "number-circle rolling";
-
-
-    circle.textContent =
-      "？";
-
-
-    item.appendChild(
-      label
-    );
-
-
-    item.appendChild(
-      circle
-    );
-
-
-    resultArea.appendChild(
-      item
-    );
-
-
-    const start =
-      Date.now();
-
-
-    while (
-      Date.now() -
-      start <
-      ROLLING_TIME
-    ) {
-
-
-      const currentAvailable =
-        getAvailableNumbers();
-
-
-      const preview =
-        currentAvailable[
-          Math.floor(
-            Math.random() *
-            currentAvailable.length
-          )
-        ];
-
-
-      circle.textContent =
-        preview;
-
-
-      await sleep(
-        ROLL_SPEED
-      );
-
-    }
-
-
-    const currentAvailable =
-      getAvailableNumbers();
-
-
-    const selected =
-      currentAvailable[
-        Math.floor(
-          Math.random() *
-          currentAvailable.length
-        )
-      ];
-
-
-    const index =
-      remaining.indexOf(
-        selected
-      );
-
-
-    remaining.splice(
-      index,
-      1
-    );
-
-
-    drawn.push(
-      selected
-    );
-
-
-    lastRound.push(
-      selected
-    );
-
-
-    circle.textContent =
-      selected;
-
-
-    circle.classList.remove(
-      "rolling"
-    );
-
-
-    circle.classList.add(
-      "final"
-    );
-
-
-    status.textContent =
-      "第 " +
-      (order + 1) +
-      " 位是 " +
-      selected +
-      " 號";
-
-
-    render();
-
+    /*
+      如果還要繼續抽下一位：
+      等一下 → 移除剛剛抽中的人
+      → 重畫下一個轉盤
+    */
 
     if (
-      order <
-      amount - 1
+      i < amount
     ) {
 
 
       await sleep(
-        BETWEEN_TIME
+        BETWEEN_SPINS
+      );
+
+
+      resetWheelAngle();
+
+
+      drawWheel();
+
+
+      await sleep(
+        250
       );
 
     }
@@ -1171,24 +1621,39 @@ async function drawNumbers() {
     false;
 
 
+  /*
+    最後把抽完的人從轉盤移除
+  */
+
+  await sleep(500);
+
+
+  resetWheelAngle();
+
   render();
 
 
   status.textContent =
-    "本輪抽籤完成，共抽出 " +
+    "本輪完成，共抽出 " +
     amount +
     " 位";
 
 }
 
 
+/* =========================
+   放回上一輪
+========================= */
+
 function putBack() {
 
   if (
-    lastRound.length === 0 ||
-    isDrawing
+    isDrawing ||
+    lastRound.length === 0
   ) {
+
     return;
+
   }
 
 
@@ -1196,19 +1661,18 @@ function putBack() {
     number => {
 
 
-      const drawnIndex =
+      const index =
         drawn.indexOf(
           number
         );
 
 
       if (
-        drawnIndex !== -1
+        index !== -1
       ) {
 
-
         drawn.splice(
-          drawnIndex,
+          index,
           1
         );
 
@@ -1221,7 +1685,6 @@ function putBack() {
         )
       ) {
 
-
         remaining.push(
           number
         );
@@ -1233,7 +1696,7 @@ function putBack() {
 
 
   remaining.sort(
-    (a, b) =>
+    (a,b) =>
       a - b
   );
 
@@ -1241,14 +1704,11 @@ function putBack() {
   lastRound = [];
 
 
-  resultArea.innerHTML = `
+  resultBox.innerHTML =
+    "";
 
-    <div class="number-circle question">
-      ？
-    </div>
 
-  `;
-
+  resetWheelAngle();
 
   render();
 
@@ -1259,15 +1719,96 @@ function putBack() {
 }
 
 
+/* =========================
+   重新開始
+   保留請假設定
+========================= */
+
+function resetDraw() {
+
+  if (isDrawing) {
+    return;
+  }
+
+
+  remaining = [];
+
+
+  for (
+    let i = 1;
+    i <= TOTAL;
+    i++
+  ) {
+
+    remaining.push(i);
+
+  }
+
+
+  drawn = [];
+
+  lastRound = [];
+
+
+  resultBox.innerHTML =
+    "";
+
+
+  resetWheelAngle();
+
+  render();
+
+
+  status.textContent =
+    "已重新開始，今日不參與設定已保留";
+
+}
+
+
+/* =========================
+   初始化
+========================= */
+
+function initialize() {
+
+  remaining = [];
+
+
+  for (
+    let i = 1;
+    i <= TOTAL;
+    i++
+  ) {
+
+    remaining.push(i);
+
+  }
+
+
+  drawn = [];
+
+  excluded = [];
+
+  lastRound = [];
+
+  resultBox.innerHTML =
+    "";
+
+
+  resetWheelAngle();
+
+  render();
+
+}
+
+
+/* =========================
+   按鈕
+========================= */
+
 drawBtn.addEventListener(
   "click",
-  drawNumbers
-);
-
-
-resetBtn.addEventListener(
-  "click",
-  resetDrawOnly
+  startDraw
 );
 
 
@@ -1277,13 +1818,21 @@ putBackBtn.addEventListener(
 );
 
 
+resetBtn.addEventListener(
+  "click",
+  resetDraw
+);
+
+
 restoreAllBtn.addEventListener(
   "click",
   restoreAll
 );
 
 
-initializeAll();
+/* 啟動 */
+
+initialize();
 
 </script>
 
