@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>六年級座號抽籤系統</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+      background: #f6f3ec;
+      color: #3e3a35;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 980px;
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 24px;
+    }
+
+    .panel {
+      background: #ffffff;
+      border: 1px solid #ddd7cc;
+      border-radius: 24px;
+      padding: 28px;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.05);
+    }
+
+    .main-panel {
+      text-align: center;
+    }
+
+    .title {
+      font-size: 30px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      color: #7a746b;
+      margin-bottom: 28px;
+    }
+
+    .number-circle {
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #eee8dc;
+      border: 5px solid #c6baa6;
+      font-size: 96px;
+      font-weight: 900;
+      transition: 0.15s;
+    }
+
+    .draw-btn {
+      width: 100%;
+      border: none;
+      border-radius: 16px;
+      padding: 18px;
+      margin-top: 28px;
+      font-size: 24px;
+      font-weight: 800;
+      background: #756957;
+      color: white;
+      cursor: pointer;
+    }
+
+    .draw-btn:hover {
+      opacity: 0.9;
+    }
+
+    .draw-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .status {
+      margin-top: 16px;
+      color: #777168;
+      font-size: 16px;
+    }
+
+    .side {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 800;
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .number-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .number-chip {
+      min-width: 54px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      text-align: center;
+      font-weight: 800;
+      background: #f1ede5;
+      border: 1px solid #ded6c9;
+    }
+
+    .number-chip.drawn {
+      background: #e6e3dd;
+      color: #99948d;
+      text-decoration: line-through;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .action-btn {
+      flex: 1;
+      padding: 13px;
+      border-radius: 12px;
+      border: 1px solid #cfc7bb;
+      background: white;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .action-btn:hover {
+      background: #f5f1ea;
+    }
+
+    .action-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .hint {
+      font-size: 13px;
+      color: #999289;
+      text-align: center;
+      margin-top: 18px;
+    }
+
+    @media (max-width: 760px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+
+      .number-circle {
+        width: 180px;
+        height: 180px;
+        font-size: 78px;
+      }
+
+      .title {
+        font-size: 26px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <section class="panel main-panel">
+    <div class="title">六年級座號抽籤</div>
+    <div class="subtitle">1～11 號｜抽過不重複</div>
+
+    <div class="number-circle" id="result">？</div>
+
+    <button class="draw-btn" id="drawBtn">
+      🎲 抽一位
+    </button>
+
+    <div class="status" id="status">
+      目前有 11 位可以抽
+    </div>
+
+    <div class="hint">
+      僅使用座號，不顯示學生姓名
+    </div>
+  </section>
+
+
+  <div class="side">
+
+    <section class="panel">
+      <div class="section-title">
+        <span>尚未抽到</span>
+        <span id="remainingCount">11 人</span>
+      </div>
+
+      <div class="number-list" id="remainingList"></div>
+    </section>
+
+
+    <section class="panel">
+      <div class="section-title">
+        <span>已抽過</span>
+        <span id="drawnCount">0 人</span>
+      </div>
+
+      <div class="number-list" id="drawnList">
+        尚未有人被抽到
+      </div>
+    </section>
+
+
+    <div class="actions">
+      <button class="action-btn" id="putBackBtn" disabled>
+        ↩ 放回上一位
+      </button>
+
+      <button class="action-btn" id="resetBtn">
+        🔄 重新開始
+      </button>
+    </div>
+
+  </div>
+
+</div>
+
+
+<script>
+
+const TOTAL = 11;
+
+let remaining = [];
+let drawn = [];
+let lastDrawn = null;
+let isDrawing = false;
+
+const result = document.getElementById("result");
+const drawBtn = document.getElementById("drawBtn");
+const resetBtn = document.getElementById("resetBtn");
+const putBackBtn = document.getElementById("putBackBtn");
+
+const remainingList = document.getElementById("remainingList");
+const drawnList = document.getElementById("drawnList");
+
+const remainingCount = document.getElementById("remainingCount");
+const drawnCount = document.getElementById("drawnCount");
+const status = document.getElementById("status");
+
+
+function initialize() {
+  remaining = [];
+
+  for (let i = 1; i <= TOTAL; i++) {
+    remaining.push(i);
+  }
+
+  drawn = [];
+  lastDrawn = null;
+
+  result.textContent = "？";
+
+  render();
+}
+
+
+function render() {
+
+  remainingList.innerHTML = "";
+
+  remaining.forEach(number => {
+    const chip = document.createElement("div");
+    chip.className = "number-chip";
+    chip.textContent = number + "號";
+    remainingList.appendChild(chip);
+  });
+
+
+  drawnList.innerHTML = "";
+
+  if (drawn.length === 0) {
+
+    drawnList.textContent = "尚未有人被抽到";
+
+  } else {
+
+    drawn.forEach(number => {
+
+      const chip = document.createElement("div");
+
+      chip.className = "number-chip drawn";
+
+      chip.textContent = number + "號";
+
+      drawnList.appendChild(chip);
+
+    });
+
+  }
+
+
+  remainingCount.textContent = remaining.length + " 人";
+  drawnCount.textContent = drawn.length + " 人";
+
+
+  if (remaining.length === 0) {
+
+    status.textContent = "全部 11 位都抽過囉！";
+
+    drawBtn.disabled = true;
+
+  } else {
+
+    status.textContent =
+      "目前有 " + remaining.length + " 位可以抽";
+
+    drawBtn.disabled = isDrawing;
+
+  }
+
+
+  putBackBtn.disabled =
+    lastDrawn === null || isDrawing;
+
+}
+
+
+function drawNumber() {
+
+  if (remaining.length === 0 || isDrawing) {
+    return;
+  }
+
+  isDrawing = true;
+
+  drawBtn.disabled = true;
+  putBackBtn.disabled = true;
+
+  let count = 0;
+
+  const animation = setInterval(() => {
+
+    const randomPreview =
+      remaining[
+        Math.floor(Math.random() * remaining.length)
+      ];
+
+    result.textContent = randomPreview;
+
+    count++;
+
+    if (count >= 18) {
+
+      clearInterval(animation);
+
+      const randomIndex =
+        Math.floor(Math.random() * remaining.length);
+
+      const selected =
+        remaining.splice(randomIndex, 1)[0];
+
+      drawn.push(selected);
+
+      lastDrawn = selected;
+
+      result.textContent = selected;
+
+      isDrawing = false;
+
+      render();
+
+    }
+
+  }, 60);
+
+}
+
+
+function putBack() {
+
+  if (lastDrawn === null) {
+    return;
+  }
+
+  const index =
+    drawn.lastIndexOf(lastDrawn);
+
+  if (index !== -1) {
+
+    drawn.splice(index, 1);
+
+  }
+
+  remaining.push(lastDrawn);
+
+  remaining.sort((a, b) => a - b);
+
+  lastDrawn = null;
+
+  result.textContent = "？";
+
+  render();
+
+}
+
+
+drawBtn.addEventListener(
+  "click",
+  drawNumber
+);
+
+
+resetBtn.addEventListener(
+  "click",
+  initialize
+);
+
+
+putBackBtn.addEventListener(
+  "click",
+  putBack
+);
+
+
+initialize();
+
+</script>
+
+</body>
+</html>
