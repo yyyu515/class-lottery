@@ -16,34 +16,26 @@
       font-family: "Noto Sans TC", "Microsoft JhengHei", sans-serif;
       background: #f6f3ec;
       color: #3e3a35;
-
       min-height: 100vh;
-
       display: flex;
       justify-content: center;
       align-items: center;
-
       padding: 24px;
     }
 
     .app {
       width: 100%;
       max-width: 1100px;
-
       display: grid;
       grid-template-columns: 1.2fr 0.8fr;
-
       gap: 24px;
     }
 
     .panel {
       background: #ffffff;
-
       border: 1px solid #ddd7cc;
       border-radius: 24px;
-
       padding: 28px;
-
       box-shadow: 0 6px 24px rgba(0, 0, 0, 0.05);
     }
 
@@ -62,16 +54,12 @@
       margin-bottom: 22px;
     }
 
-    /* 抽幾位 */
-
     .draw-settings {
       display: flex;
       justify-content: center;
       align-items: center;
       gap: 12px;
-
-      margin-bottom: 20px;
-
+      margin-bottom: 18px;
       font-size: 17px;
       font-weight: 700;
     }
@@ -79,29 +67,21 @@
     select {
       font-size: 17px;
       padding: 10px 14px;
-
       border: 1px solid #cfc7bb;
       border-radius: 10px;
-
       background: white;
       color: #3e3a35;
-
       cursor: pointer;
     }
 
-    /* 抽籤結果區 */
-
     .result-area {
-      min-height: 240px;
-
+      min-height: 260px;
       display: flex;
       justify-content: center;
       align-items: center;
       flex-wrap: wrap;
-
-      gap: 18px;
-
-      padding: 15px;
+      gap: 20px;
+      padding: 16px;
     }
 
     .result-item {
@@ -112,7 +92,7 @@
     }
 
     .result-order {
-      font-size: 17px;
+      font-size: 18px;
       font-weight: 800;
       color: #756957;
     }
@@ -120,64 +100,60 @@
     .number-circle {
       width: 125px;
       height: 125px;
-
       border-radius: 50%;
-
       display: flex;
       align-items: center;
       justify-content: center;
-
       background: #eee8dc;
-
       border: 5px solid #c6baa6;
-
       font-size: 56px;
       font-weight: 900;
+      transition:
+        transform 0.15s ease,
+        background 0.2s ease,
+        border-color 0.2s ease;
+    }
 
-      animation: pop 0.35s ease;
+    .number-circle.rolling {
+      transform: scale(1.04);
+    }
+
+    .number-circle.final {
+      animation: pop 0.45s ease;
+      background: #e4dccd;
+      border-color: #9f907a;
     }
 
     .question {
       width: 200px;
       height: 200px;
-
       font-size: 90px;
     }
 
     @keyframes pop {
       0% {
-        transform: scale(0.6);
-        opacity: 0;
+        transform: scale(0.75);
       }
 
-      70% {
-        transform: scale(1.08);
+      60% {
+        transform: scale(1.12);
       }
 
       100% {
         transform: scale(1);
-        opacity: 1;
       }
     }
 
-    /* 抽籤按鈕 */
-
     .draw-btn {
       width: 100%;
-
       border: none;
       border-radius: 16px;
-
       padding: 18px;
-
       margin-top: 10px;
-
       font-size: 23px;
       font-weight: 800;
-
       background: #756957;
       color: white;
-
       cursor: pointer;
     }
 
@@ -192,26 +168,21 @@
 
     .status {
       margin-top: 15px;
-
       font-size: 16px;
       color: #777168;
+      min-height: 24px;
     }
 
     .hint {
       margin-top: 18px;
-
       text-align: center;
-
       font-size: 13px;
       color: #999289;
     }
 
-    /* 右側 */
-
     .side {
       display: flex;
       flex-direction: column;
-
       gap: 18px;
     }
 
@@ -219,9 +190,7 @@
       display: flex;
       justify-content: space-between;
       gap: 12px;
-
       margin-bottom: 14px;
-
       font-size: 18px;
       font-weight: 800;
     }
@@ -229,34 +198,24 @@
     .number-list {
       display: flex;
       flex-wrap: wrap;
-
       gap: 10px;
     }
 
     .number-chip {
       min-width: 54px;
-
       padding: 10px 12px;
-
       border-radius: 12px;
-
       text-align: center;
-
       font-weight: 800;
-
       background: #f1ede5;
-
       border: 1px solid #ded6c9;
     }
 
     .number-chip.drawn {
       background: #e6e3dd;
       color: #99948d;
-
       text-decoration: line-through;
     }
-
-    /* 底部按鈕 */
 
     .actions {
       display: flex;
@@ -265,17 +224,12 @@
 
     .action-btn {
       flex: 1;
-
       padding: 13px;
-
       border: 1px solid #cfc7bb;
       border-radius: 12px;
-
       background: white;
-
       font-size: 16px;
       font-weight: 700;
-
       cursor: pointer;
     }
 
@@ -288,33 +242,33 @@
       cursor: not-allowed;
     }
 
-    /* 手機 */
-
     @media (max-width: 760px) {
       .app {
         grid-template-columns: 1fr;
       }
 
       .result-area {
-        min-height: 190px;
+        min-height: 200px;
       }
 
       .number-circle {
         width: 105px;
         height: 105px;
-
         font-size: 46px;
       }
 
       .question {
         width: 160px;
         height: 160px;
-
         font-size: 70px;
       }
 
       .title {
         font-size: 26px;
+      }
+
+      .actions {
+        flex-direction: column;
       }
     }
   </style>
@@ -323,8 +277,6 @@
 <body>
 
 <div class="app">
-
-  <!-- 左側主抽籤區 -->
 
   <section class="panel main-panel">
 
@@ -375,12 +327,10 @@
     </div>
 
     <div class="hint">
-      抽出的先後順序，就是實際使用順序
+      多人抽籤時會依序開出，第 1 位、第 2 位、第 3 位……
     </div>
 
   </section>
-
-  <!-- 右側 -->
 
   <div class="side">
 
@@ -458,10 +408,13 @@
 
 const TOTAL = 11;
 
+const ROLLING_TIME = 2000;
+const BETWEEN_TIME = 900;
+const ROLL_SPEED = 85;
+
 let remaining = [];
 let drawn = [];
 let lastRound = [];
-
 let isDrawing = false;
 
 const resultArea =
@@ -495,7 +448,12 @@ const status =
   document.getElementById("status");
 
 
-/* 初始化 */
+function sleep(ms) {
+  return new Promise(resolve =>
+    setTimeout(resolve, ms)
+  );
+}
+
 
 function initialize() {
 
@@ -507,6 +465,7 @@ function initialize() {
 
   drawn = [];
   lastRound = [];
+  isDrawing = false;
 
   resultArea.innerHTML = `
     <div class="number-circle question">
@@ -514,11 +473,11 @@ function initialize() {
     </div>
   `;
 
+  drawCount.disabled = false;
+
   render();
 }
 
-
-/* 更新畫面 */
 
 function render() {
 
@@ -581,15 +540,14 @@ function render() {
 
     drawBtn.disabled = true;
 
-  } else {
+  } else if (!isDrawing) {
 
     status.textContent =
       "目前有 " +
       remaining.length +
       " 位可以抽";
 
-    drawBtn.disabled =
-      isDrawing;
+    drawBtn.disabled = false;
 
   }
 
@@ -600,9 +558,7 @@ function render() {
 }
 
 
-/* 開始抽籤 */
-
-function drawNumbers() {
+async function drawNumbers() {
 
   if (
     remaining.length === 0 ||
@@ -629,90 +585,86 @@ function drawNumbers() {
 
 
   isDrawing = true;
+  lastRound = [];
 
   drawBtn.disabled = true;
   putBackBtn.disabled = true;
   drawCount.disabled = true;
 
-
-  let animationCount = 0;
-
-
-  const animation =
-    setInterval(() => {
-
-      resultArea.innerHTML = "";
-
-      let preview =
-        [...remaining];
-
-      preview.sort(
-        () => Math.random() - 0.5
-      );
+  resultArea.innerHTML = "";
 
 
-      preview
-        .slice(0, amount)
-        .forEach((number, index) => {
+  for (
+    let order = 0;
+    order < amount;
+    order++
+  ) {
 
-          const item =
-            document.createElement("div");
-
-          item.className =
-            "result-item";
-
-
-          const order =
-            document.createElement("div");
-
-          order.className =
-            "result-order";
-
-          order.textContent =
-            "第 " + (index + 1) + " 位";
+    status.textContent =
+      "正在抽第 " +
+      (order + 1) +
+      " 位…";
 
 
-          const circle =
-            document.createElement("div");
+    const item =
+      document.createElement("div");
 
-          circle.className =
-            "number-circle";
-
-          circle.textContent =
-            number;
+    item.className =
+      "result-item";
 
 
-          item.appendChild(order);
-          item.appendChild(circle);
+    const orderLabel =
+      document.createElement("div");
 
-          resultArea.appendChild(item);
+    orderLabel.className =
+      "result-order";
 
-        });
-
-
-      animationCount++;
-
-
-      if (animationCount >= 18) {
-
-        clearInterval(animation);
-
-        finishDraw(amount);
-
-      }
-
-    }, 70);
-}
+    orderLabel.textContent =
+      "第 " +
+      (order + 1) +
+      " 位";
 
 
-/* 正式決定結果 */
+    const circle =
+      document.createElement("div");
 
-function finishDraw(amount) {
+    circle.className =
+      "number-circle rolling";
 
-  lastRound = [];
+    circle.textContent =
+      "？";
 
 
-  for (let i = 0; i < amount; i++) {
+    item.appendChild(orderLabel);
+    item.appendChild(circle);
+
+    resultArea.appendChild(item);
+
+
+    const startTime =
+      Date.now();
+
+
+    while (
+      Date.now() - startTime <
+      ROLLING_TIME
+    ) {
+
+      const previewNumber =
+        remaining[
+          Math.floor(
+            Math.random() *
+            remaining.length
+          )
+        ];
+
+      circle.textContent =
+        previewNumber;
+
+      await sleep(ROLL_SPEED);
+
+    }
+
 
     const randomIndex =
       Math.floor(
@@ -729,50 +681,34 @@ function finishDraw(amount) {
 
 
     lastRound.push(selected);
-
     drawn.push(selected);
 
-  }
-
-
-  resultArea.innerHTML = "";
-
-
-  lastRound.forEach((number, index) => {
-
-    const item =
-      document.createElement("div");
-
-    item.className =
-      "result-item";
-
-
-    const order =
-      document.createElement("div");
-
-    order.className =
-      "result-order";
-
-    order.textContent =
-      "第 " + (index + 1) + " 位";
-
-
-    const circle =
-      document.createElement("div");
-
-    circle.className =
-      "number-circle";
-
     circle.textContent =
-      number;
+      selected;
+
+    circle.classList.remove("rolling");
+
+    circle.classList.add("final");
 
 
-    item.appendChild(order);
-    item.appendChild(circle);
+    status.textContent =
+      "第 " +
+      (order + 1) +
+      " 位是 " +
+      selected +
+      " 號";
 
-    resultArea.appendChild(item);
 
-  });
+    render();
+
+
+    if (order < amount - 1) {
+
+      await sleep(BETWEEN_TIME);
+
+    }
+
+  }
 
 
   isDrawing = false;
@@ -780,10 +716,13 @@ function finishDraw(amount) {
   drawCount.disabled = false;
 
   render();
+
+  status.textContent =
+    "本輪抽籤完成，共抽出 " +
+    amount +
+    " 位";
 }
 
-
-/* 放回上一輪 */
 
 function putBack() {
 
@@ -825,10 +764,11 @@ function putBack() {
 
 
   render();
+
+  status.textContent =
+    "上一輪已放回";
 }
 
-
-/* 按鈕 */
 
 drawBtn.addEventListener(
   "click",
@@ -845,8 +785,6 @@ putBackBtn.addEventListener(
   putBack
 );
 
-
-/* 啟動 */
 
 initialize();
 
