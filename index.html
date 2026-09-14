@@ -323,8 +323,6 @@ select {
 }
 
 
-/* 轉動時 GO */
-
 .go-button.spinning {
 
   animation:
@@ -843,49 +841,27 @@ select {
 
     <select id="drawCount">
 
-      <option value="1">
-        1 位
-      </option>
+      <option value="1">1 位</option>
 
-      <option value="2">
-        2 位
-      </option>
+      <option value="2">2 位</option>
 
-      <option value="3">
-        3 位
-      </option>
+      <option value="3">3 位</option>
 
-      <option value="4">
-        4 位
-      </option>
+      <option value="4">4 位</option>
 
-      <option value="5">
-        5 位
-      </option>
+      <option value="5">5 位</option>
 
-      <option value="6">
-        6 位
-      </option>
+      <option value="6">6 位</option>
 
-      <option value="7">
-        7 位
-      </option>
+      <option value="7">7 位</option>
 
-      <option value="8">
-        8 位
-      </option>
+      <option value="8">8 位</option>
 
-      <option value="9">
-        9 位
-      </option>
+      <option value="9">9 位</option>
 
-      <option value="10">
-        10 位
-      </option>
+      <option value="10">10 位</option>
 
-      <option value="11">
-        11 位
-      </option>
+      <option value="11">11 位</option>
 
     </select>
 
@@ -909,14 +885,10 @@ select {
     </canvas>
 
 
-    <!-- 朝下箭頭 -->
-
     <div
       class="pointer">
     </div>
 
-
-    <!-- GO 就是按鈕 -->
 
     <button
       id="goButton"
@@ -969,8 +941,7 @@ select {
   <!-- 今日不參與 -->
 
   <section
-    class="panel
-    side-panel">
+    class="panel side-panel">
 
 
     <div
@@ -1010,8 +981,7 @@ select {
   <!-- 尚未抽到 -->
 
   <section
-    class="panel
-    side-panel">
+    class="panel side-panel">
 
 
     <div
@@ -1049,8 +1019,7 @@ select {
   <!-- 已抽過 -->
 
   <section
-    class="panel
-    side-panel">
+    class="panel side-panel">
 
 
     <div
@@ -1132,20 +1101,15 @@ const TOTAL = 11;
 
 
 /*
-  每一次轉盤時間
-
-  8500 = 8.5 秒
-
-  想更久：
-  可以改成 10000
+  每次轉動 10 秒
 */
 
-const SPIN_TIME = 8500;
+const SPIN_TIME = 10000;
 
 
 /*
   抽多人時，
-  每一位中間停多久
+  每一位之間停 1.5 秒
 */
 
 const BETWEEN_SPINS = 1500;
@@ -1167,7 +1131,7 @@ let isDrawing = false;
 
 
 /* =========================
-   元素
+   DOM
 ========================= */
 
 const wheel =
@@ -1324,8 +1288,6 @@ function drawWheel() {
   );
 
 
-  /* 沒人可以抽 */
-
   if (
     numbers.length === 0
   ) {
@@ -1389,10 +1351,6 @@ function drawWheel() {
 
   /*
     奶茶三色
-
-    淺米白
-    奶茶
-    深奶茶
   */
 
   const colors = [
@@ -1463,7 +1421,7 @@ function drawWheel() {
 
 
 
-      /* 白色分隔線 */
+      /* 分隔線 */
 
       ctx.strokeStyle =
         "#FFFDF8";
@@ -1619,7 +1577,7 @@ function drawWheel() {
 
 
 /* =========================
-   重設角度
+   重設轉盤角度
 ========================= */
 
 function resetWheelAngle() {
@@ -1635,10 +1593,6 @@ function resetWheelAngle() {
   wheel.style.transform =
     "rotate(0deg)";
 
-
-  /*
-    強制瀏覽器更新
-  */
 
   void wheel.offsetWidth;
 
@@ -2026,115 +1980,13 @@ async function spinOne(
     getAvailableNumbers();
 
 
+  if (
+    numbers.length === 0
+  ) {
 
-  /* 隨機決定結果 */
+    return;
 
-  const selectedIndex =
-
-    Math.floor(
-
-      Math.random() *
-
-      numbers.length
-
-    );
-
-
-
-  const selected =
-
-    numbers[
-      selectedIndex
-    ];
-
-
-
-  const sliceDegrees =
-
-    360 /
-
-    numbers.length;
-
-
-
-  /*
-    每一格的中心
-  */
-
-  const targetCenter =
-
-    (
-      selectedIndex +
-      0.5
-    ) *
-
-    sliceDegrees;
-
-
-
-  /*
-    要把該格中心
-    轉到最上方箭頭
-  */
-
-  const desiredRotation =
-
-    360 -
-
-    targetCenter;
-
-
-
-  const currentMod =
-
-    (
-      (
-        currentRotation %
-        360
-      ) +
-      360
-    ) %
-    360;
-
-
-
-  const desiredMod =
-
-    (
-      (
-        desiredRotation %
-        360
-      ) +
-      360
-    ) %
-    360;
-
-
-
-  const extra =
-
-    (
-      desiredMod -
-      currentMod +
-      360
-    ) %
-    360;
-
-
-
-  /*
-    多轉 7 圈
-
-    2520 = 360 × 7
-  */
-
-  currentRotation =
-
-    currentRotation +
-
-    2520 +
-
-    extra;
+  }
 
 
 
@@ -2148,21 +2000,60 @@ async function spinOne(
 
 
 
+  /* =========================
+     隨機決定轉多少
+     不預先決定中獎號碼
+  ========================= */
+
+
+  const extraTurns =
+
+    6 +
+
+    Math.floor(
+      Math.random() * 4
+    );
+
+
   /*
-    重點：
-    cubic-bezier 讓前面快速，
-    後面非常緩慢地停下來。
+    6～9 圈
   */
+
+
+  const randomStopAngle =
+
+    Math.random() * 360;
+
+
+  /*
+    隨機停在 0～360
+    任意角度
+  */
+
+
+  const totalRotation =
+
+    extraTurns * 360 +
+
+    randomStopAngle;
+
+
+
+  currentRotation +=
+
+    totalRotation;
+
+
+
+  /* =========================
+     慢慢減速
+  ========================= */
+
 
   wheel.style.transition =
 
-    `transform ${SPIN_TIME}ms cubic-bezier(0.12, 0.72, 0.08, 1)`;
+    `transform ${SPIN_TIME}ms cubic-bezier(0.08, 0.72, 0.08, 1)`;
 
-
-  /*
-    下一個畫面更新後
-    才開始轉
-  */
 
   requestAnimationFrame(
     () => {
@@ -2177,15 +2068,111 @@ async function spinOne(
 
 
 
+  /*
+    等到完全停下
+  */
+
   await sleep(
-    SPIN_TIME + 200
+    SPIN_TIME + 250
   );
 
 
 
-  /* =================
-     正式抽中
-  ================= */
+  /* =========================
+     停完後才判斷
+     箭頭指到哪一格
+  ========================= */
+
+
+  const finalRotation =
+
+    (
+      (
+        currentRotation %
+        360
+      ) +
+      360
+    ) %
+    360;
+
+
+
+  /*
+    因為轉盤順時針轉，
+    箭頭固定在正上方，
+    所以反推箭頭在轉盤上
+    對應的角度
+  */
+
+  const pointerAngle =
+
+    (
+      360 -
+      finalRotation
+    ) %
+    360;
+
+
+
+  const sliceDegrees =
+
+    360 /
+
+    numbers.length;
+
+
+
+  /*
+    第一格是以正上方為起點，
+    加半格後判斷所在區域
+  */
+
+  const adjustedAngle =
+
+    (
+      pointerAngle +
+
+      sliceDegrees / 2
+    ) %
+
+    360;
+
+
+
+  let selectedIndex =
+
+    Math.floor(
+
+      adjustedAngle /
+
+      sliceDegrees
+
+    );
+
+
+
+  if (
+    selectedIndex >=
+    numbers.length
+  ) {
+
+    selectedIndex = 0;
+
+  }
+
+
+
+  const selected =
+
+    numbers[
+      selectedIndex
+    ];
+
+
+
+  /* =========================
+     正式記錄
+  ========================= */
 
 
   const remainingIndex =
@@ -2221,7 +2208,10 @@ async function spinOne(
 
 
 
-  /* 顯示結果 */
+  /* =========================
+     顯示結果
+  ========================= */
+
 
   const card =
 
@@ -2402,7 +2392,7 @@ async function startDraw() {
 
 
       /*
-        先讓學生看到結果
+        先讓學生看到上一位結果
       */
 
       await sleep(
@@ -2412,8 +2402,10 @@ async function startDraw() {
 
 
       /*
-        下一位重新畫轉盤
-        剛抽中的人消失
+        下一位開始前，
+        重畫轉盤
+
+        剛剛抽中的座號會消失
       */
 
       resetWheelAngle();
@@ -2423,7 +2415,7 @@ async function startDraw() {
 
 
       await sleep(
-        400
+        500
       );
 
     }
@@ -2456,14 +2448,19 @@ async function startDraw() {
 
 
   /*
-    稍微保留最後結果，
-    再更新轉盤
+    最後先讓轉盤停著
+    讓大家看一下
   */
 
   await sleep(
-    700
+    900
   );
 
+
+
+  /*
+    再更新下一輪轉盤
+  */
 
   resetWheelAngle();
 
@@ -2690,12 +2687,8 @@ function initialize() {
 
 
 /* =========================
-   按鈕事件
+   按鈕
 ========================= */
-
-/*
-  點 GO 就開始
-*/
 
 goButton.addEventListener(
   "click",
@@ -2722,10 +2715,11 @@ restoreAllBtn.addEventListener(
 
 
 
-/* 啟動 */
+/* =========================
+   啟動
+========================= */
 
 initialize();
-
 
 </script>
 
