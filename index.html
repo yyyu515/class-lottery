@@ -25,7 +25,7 @@
 
     .app {
       width: 100%;
-      max-width: 1100px;
+      max-width: 1180px;
       display: grid;
       grid-template-columns: 1.2fr 0.8fr;
       gap: 24px;
@@ -62,6 +62,7 @@
       margin-bottom: 18px;
       font-size: 17px;
       font-weight: 700;
+      flex-wrap: wrap;
     }
 
     select {
@@ -74,8 +75,63 @@
       cursor: pointer;
     }
 
+    .absence-box {
+      margin: 0 auto 20px;
+      padding: 16px;
+      border: 1px solid #ded6c9;
+      border-radius: 16px;
+      background: #faf8f4;
+      text-align: left;
+    }
+
+    .absence-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+      font-weight: 800;
+    }
+
+    .absence-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .absence-btn {
+      min-width: 54px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid #d6cec2;
+      background: white;
+      font-weight: 800;
+      cursor: pointer;
+      color: #3e3a35;
+    }
+
+    .absence-btn:hover {
+      background: #f1ede5;
+    }
+
+    .absence-btn.excluded {
+      background: #d8d3cb;
+      color: #777168;
+      text-decoration: line-through;
+    }
+
+    .restore-btn {
+      padding: 8px 12px;
+      border-radius: 10px;
+      border: 1px solid #cfc7bb;
+      background: white;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
     .result-area {
-      min-height: 260px;
+      min-height: 270px;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -217,6 +273,11 @@
       text-decoration: line-through;
     }
 
+    .number-chip.excluded {
+      background: #ddd9d2;
+      color: #777168;
+    }
+
     .actions {
       display: flex;
       gap: 10px;
@@ -310,6 +371,30 @@
 
     </div>
 
+    <div class="absence-box">
+
+      <div class="absence-title">
+
+        <span>
+          今日請假／不參與抽籤
+        </span>
+
+        <button
+          class="restore-btn"
+          id="restoreAllBtn"
+          type="button">
+          恢復全員
+        </button>
+
+      </div>
+
+      <div
+        class="absence-list"
+        id="absenceList">
+      </div>
+
+    </div>
+
     <div class="result-area" id="resultArea">
 
       <div class="number-circle question">
@@ -327,7 +412,7 @@
     </div>
 
     <div class="hint">
-      多人抽籤時會依序開出，第 1 位、第 2 位、第 3 位……
+      多人抽籤時會依序開出；請假座號不會被抽中。
     </div>
 
   </section>
@@ -351,6 +436,30 @@
       <div
         class="number-list"
         id="remainingList">
+      </div>
+
+    </section>
+
+    <section class="panel">
+
+      <div class="section-title">
+
+        <span>
+          今日不參與
+        </span>
+
+        <span id="excludedCount">
+          0 人
+        </span>
+
+      </div>
+
+      <div
+        class="number-list"
+        id="excludedList">
+
+        無
+
       </div>
 
     </section>
@@ -414,6 +523,7 @@ const ROLL_SPEED = 85;
 
 let remaining = [];
 let drawn = [];
+let excluded = [];
 let lastRound = [];
 let isDrawing = false;
 
@@ -429,6 +539,9 @@ const resetBtn =
 const putBackBtn =
   document.getElementById("putBackBtn");
 
+const restoreAllBtn =
+  document.getElementById("restoreAllBtn");
+
 const drawCount =
   document.getElementById("drawCount");
 
@@ -438,11 +551,20 @@ const remainingList =
 const drawnList =
   document.getElementById("drawnList");
 
+const excludedList =
+  document.getElementById("excludedList");
+
+const absenceList =
+  document.getElementById("absenceList");
+
 const remainingCount =
   document.getElementById("remainingCount");
 
 const drawnCount =
   document.getElementById("drawnCount");
+
+const excludedCount =
+  document.getElementById("excludedCount");
 
 const status =
   document.getElementById("status");
@@ -455,7 +577,41 @@ function sleep(ms) {
 }
 
 
-function initialize() {
+function getAvailableNumbers() {
+
+  return remaining.filter(number =>
+    !excluded.includes(number)
+  );
+
+}
+
+
+function initializeAll() {
+
+  remaining = [];
+
+  for (let i = 1; i <= TOTAL; i++) {
+    remaining.push(i);
+  }
+
+  drawn = [];
+  excluded = [];
+  lastRound = [];
+  isDrawing = false;
+
+  resultArea.innerHTML = `
+    <div class="number-circle question">
+      ？
+    </div>
+  `;
+
+  drawCount.disabled = false;
+
+  render();
+}
+
+
+function resetDrawOnly() {
 
   remaining = [];
 
@@ -476,14 +632,60 @@ function initialize() {
   drawCount.disabled = false;
 
   render();
+
+  status.textContent =
+    "抽籤紀錄已重新開始，請假設定已保留";
+}
+
+
+function renderAbsenceButtons() {
+
+  absenceList.innerHTML = "";
+
+  for (let number = 1; number <= TOTAL; number++) {
+
+    const button =
+      document.createElement("button");
+
+    button.type = "button";
+
+    button.className =
+      "absence-btn";
+
+    if (excluded.includes(number)) {
+      button.classList.add("excluded");
+      button.textContent =
+        number + "號";
+    } else {
+      button.textContent =
+        number + "號";
+    }
+
+    button.disabled =
+      isDrawing;
+
+    button.addEventListener(
+      "click",
+      () => toggleExcluded(number)
+    );
+
+    absenceList.appendChild(button);
+  }
+
 }
 
 
 function render() {
 
+  renderAbsenceButtons();
+
+  const available =
+    getAvailableNumbers();
+
+
   remainingList.innerHTML = "";
 
-  remaining.forEach(number => {
+  available.forEach(number => {
 
     const chip =
       document.createElement("div");
@@ -497,6 +699,35 @@ function render() {
     remainingList.appendChild(chip);
 
   });
+
+
+  excludedList.innerHTML = "";
+
+  if (excluded.length === 0) {
+
+    excludedList.textContent =
+      "無";
+
+  } else {
+
+    [...excluded]
+      .sort((a, b) => a - b)
+      .forEach(number => {
+
+        const chip =
+          document.createElement("div");
+
+        chip.className =
+          "number-chip excluded";
+
+        chip.textContent =
+          number + "號";
+
+        excludedList.appendChild(chip);
+
+      });
+
+  }
 
 
   drawnList.innerHTML = "";
@@ -527,16 +758,19 @@ function render() {
 
 
   remainingCount.textContent =
-    remaining.length + " 人";
+    available.length + " 人";
 
   drawnCount.textContent =
     drawn.length + " 人";
 
+  excludedCount.textContent =
+    excluded.length + " 人";
 
-  if (remaining.length === 0) {
+
+  if (available.length === 0) {
 
     status.textContent =
-      "全部 11 位都抽過囉！";
+      "目前沒有可抽的座號";
 
     drawBtn.disabled = true;
 
@@ -544,7 +778,7 @@ function render() {
 
     status.textContent =
       "目前有 " +
-      remaining.length +
+      available.length +
       " 位可以抽";
 
     drawBtn.disabled = false;
@@ -555,15 +789,77 @@ function render() {
   putBackBtn.disabled =
     lastRound.length === 0 ||
     isDrawing;
+
+  restoreAllBtn.disabled =
+    isDrawing ||
+    excluded.length === 0;
+}
+
+
+function toggleExcluded(number) {
+
+  if (isDrawing) {
+    return;
+  }
+
+
+  if (drawn.includes(number)) {
+
+    alert(
+      number +
+      "號已經被抽過，請先重新開始抽籤後再設定不參與。"
+    );
+
+    return;
+  }
+
+
+  const index =
+    excluded.indexOf(number);
+
+
+  if (index === -1) {
+
+    excluded.push(number);
+
+  } else {
+
+    excluded.splice(index, 1);
+
+  }
+
+
+  render();
+}
+
+
+function restoreAll() {
+
+  if (isDrawing) {
+    return;
+  }
+
+  excluded = [];
+
+  render();
+
+  status.textContent =
+    "已恢復全員參與抽籤";
 }
 
 
 async function drawNumbers() {
 
-  if (
-    remaining.length === 0 ||
-    isDrawing
-  ) {
+  if (isDrawing) {
+    return;
+  }
+
+
+  const available =
+    getAvailableNumbers();
+
+
+  if (available.length === 0) {
     return;
   }
 
@@ -572,12 +868,12 @@ async function drawNumbers() {
     parseInt(drawCount.value);
 
 
-  if (amount > remaining.length) {
+  if (amount > available.length) {
 
     alert(
-      "目前只剩下 " +
-      remaining.length +
-      " 位尚未抽到喔！"
+      "目前只有 " +
+      available.length +
+      " 位可以抽喔！"
     );
 
     return;
@@ -590,6 +886,8 @@ async function drawNumbers() {
   drawBtn.disabled = true;
   putBackBtn.disabled = true;
   drawCount.disabled = true;
+
+  renderAbsenceButtons();
 
   resultArea.innerHTML = "";
 
@@ -650,45 +948,67 @@ async function drawNumbers() {
       ROLLING_TIME
     ) {
 
+      const currentAvailable =
+        getAvailableNumbers();
+
+
       const previewNumber =
-        remaining[
+        currentAvailable[
           Math.floor(
             Math.random() *
-            remaining.length
+            currentAvailable.length
           )
         ];
 
+
       circle.textContent =
         previewNumber;
+
 
       await sleep(ROLL_SPEED);
 
     }
 
 
-    const randomIndex =
-      Math.floor(
-        Math.random() *
-        remaining.length
-      );
+    const currentAvailable =
+      getAvailableNumbers();
 
 
     const selected =
+      currentAvailable[
+        Math.floor(
+          Math.random() *
+          currentAvailable.length
+        )
+      ];
+
+
+    const remainingIndex =
+      remaining.indexOf(selected);
+
+
+    if (remainingIndex !== -1) {
       remaining.splice(
-        randomIndex,
+        remainingIndex,
         1
-      )[0];
+      );
+    }
 
 
     lastRound.push(selected);
     drawn.push(selected);
 
+
     circle.textContent =
       selected;
 
-    circle.classList.remove("rolling");
+    circle.classList.remove(
+      "rolling"
+    );
 
-    circle.classList.add("final");
+    circle.classList.add(
+      "final"
+    );
 
 
     status.textContent =
@@ -717,6 +1037,7 @@ async function drawNumbers() {
 
   render();
 
+
   status.textContent =
     "本輪抽籤完成，共抽出 " +
     amount +
@@ -736,14 +1057,22 @@ function putBack() {
 
   lastRound.forEach(number => {
 
-    const index =
+    const drawnIndex =
       drawn.indexOf(number);
 
-    if (index !== -1) {
-      drawn.splice(index, 1);
+    if (drawnIndex !== -1) {
+      drawn.splice(
+        drawnIndex,
+        1
+      );
     }
 
-    remaining.push(number);
+
+    if (
+      !remaining.includes(number)
+    ) {
+      remaining.push(number);
+    }
 
   });
 
@@ -765,6 +1094,7 @@ function putBack() {
 
   render();
 
+
   status.textContent =
     "上一輪已放回";
 }
@@ -777,7 +1107,7 @@ drawBtn.addEventListener(
 
 resetBtn.addEventListener(
   "click",
-  initialize
+  resetDrawOnly
 );
 
 putBackBtn.addEventListener(
@@ -785,8 +1115,13 @@ putBackBtn.addEventListener(
   putBack
 );
 
+restoreAllBtn.addEventListener(
+  "click",
+  restoreAll
+);
 
-initialize();
+
+initializeAll();
 
 </script>
 
