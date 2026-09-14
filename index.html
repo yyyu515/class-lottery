@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>六年級座號抽籤系統</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>班級座號抽籤</title>
 
   <style>
+
     * {
       box-sizing: border-box;
     }
@@ -15,26 +17,34 @@
       font-family: "Noto Sans TC", "Microsoft JhengHei", sans-serif;
       background: #f6f3ec;
       color: #3e3a35;
+
       min-height: 100vh;
+
       display: flex;
       align-items: center;
       justify-content: center;
+
       padding: 24px;
     }
 
     .app {
       width: 100%;
-      max-width: 980px;
+      max-width: 1050px;
+
       display: grid;
       grid-template-columns: 1.2fr 0.8fr;
+
       gap: 24px;
     }
 
     .panel {
-      background: #ffffff;
+      background: white;
+
       border: 1px solid #ddd7cc;
       border-radius: 24px;
+
       padding: 28px;
+
       box-shadow: 0 6px 24px rgba(0,0,0,0.05);
     }
 
@@ -45,39 +55,134 @@
     .title {
       font-size: 30px;
       font-weight: 800;
-      margin-bottom: 8px;
+
+      margin-bottom: 6px;
     }
 
     .subtitle {
       color: #7a746b;
-      margin-bottom: 28px;
+
+      margin-bottom: 24px;
     }
 
-    .number-circle {
-      width: 220px;
-      height: 220px;
-      border-radius: 50%;
-      margin: 0 auto;
+
+    /* 抽幾位 */
+
+    .draw-settings {
+      display: flex;
+
+      justify-content: center;
+      align-items: center;
+
+      gap: 12px;
+
+      margin-bottom: 22px;
+
+      font-weight: 700;
+    }
+
+    select {
+      font-size: 17px;
+
+      padding: 10px 14px;
+
+      border-radius: 10px;
+
+      border: 1px solid #cfc7bb;
+
+      background: white;
+
+      cursor: pointer;
+    }
+
+
+    /* 抽籤結果 */
+
+    .result-area {
+      min-height: 230px;
+
       display: flex;
       align-items: center;
       justify-content: center;
-      background: #eee8dc;
-      border: 5px solid #c6baa6;
-      font-size: 96px;
-      font-weight: 900;
-      transition: 0.15s;
+
+      flex-wrap: wrap;
+
+      gap: 14px;
+
+      padding: 15px;
     }
 
+    .number-circle {
+
+      width: 145px;
+      height: 145px;
+
+      border-radius: 50%;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      background: #eee8dc;
+
+      border: 5px solid #c6baa6;
+
+      font-size: 62px;
+      font-weight: 900;
+
+      animation: pop 0.35s ease;
+    }
+
+    .question {
+
+      width: 200px;
+      height: 200px;
+
+      font-size: 90px;
+    }
+
+
+    @keyframes pop {
+
+      0% {
+        transform: scale(0.6);
+        opacity: 0;
+      }
+
+      70% {
+        transform: scale(1.08);
+      }
+
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+
+    }
+
+
+    /* 抽籤按鈕 */
+
     .draw-btn {
+
       width: 100%;
+
       border: none;
+
       border-radius: 16px;
+
       padding: 18px;
-      margin-top: 28px;
-      font-size: 24px;
+
+      margin-top: 10px;
+
+      font-size: 23px;
+
       font-weight: 800;
+
       background: #756957;
+
       color: white;
+
       cursor: pointer;
     }
 
@@ -86,346 +191,818 @@
     }
 
     .draw-btn:disabled {
+
       opacity: 0.4;
+
       cursor: not-allowed;
     }
+
 
     .status {
-      margin-top: 16px;
+
+      margin-top: 15px;
+
       color: #777168;
+
       font-size: 16px;
     }
 
-    .side {
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-    }
-
-    .section-title {
-      font-size: 18px;
-      font-weight: 800;
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 14px;
-    }
-
-    .number-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .number-chip {
-      min-width: 54px;
-      padding: 10px 12px;
-      border-radius: 12px;
-      text-align: center;
-      font-weight: 800;
-      background: #f1ede5;
-      border: 1px solid #ded6c9;
-    }
-
-    .number-chip.drawn {
-      background: #e6e3dd;
-      color: #99948d;
-      text-decoration: line-through;
-    }
-
-    .actions {
-      display: flex;
-      gap: 10px;
-    }
-
-    .action-btn {
-      flex: 1;
-      padding: 13px;
-      border-radius: 12px;
-      border: 1px solid #cfc7bb;
-      background: white;
-      font-size: 16px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    .action-btn:hover {
-      background: #f5f1ea;
-    }
-
-    .action-btn:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-    }
 
     .hint {
+
       font-size: 13px;
+
       color: #999289;
+
       text-align: center;
+
       margin-top: 18px;
     }
 
+
+    /* 右側 */
+
+    .side {
+
+      display: flex;
+
+      flex-direction: column;
+
+      gap: 18px;
+    }
+
+
+    .section-title {
+
+      font-size: 18px;
+
+      font-weight: 800;
+
+      display: flex;
+
+      justify-content: space-between;
+
+      margin-bottom: 14px;
+    }
+
+
+    .number-list {
+
+      display: flex;
+
+      flex-wrap: wrap;
+
+      gap: 10px;
+    }
+
+
+    .number-chip {
+
+      min-width: 54px;
+
+      padding: 10px 12px;
+
+      border-radius: 12px;
+
+      text-align: center;
+
+      font-weight: 800;
+
+      background: #f1ede5;
+
+      border: 1px solid #ded6c9;
+    }
+
+
+    .number-chip.drawn {
+
+      background: #e6e3dd;
+
+      color: #99948d;
+
+      text-decoration: line-through;
+    }
+
+
+    /* 底部按鈕 */
+
+    .actions {
+
+      display: flex;
+
+      gap: 10px;
+    }
+
+
+    .action-btn {
+
+      flex: 1;
+
+      padding: 13px;
+
+      border-radius: 12px;
+
+      border: 1px solid #cfc7bb;
+
+      background: white;
+
+      font-size: 16px;
+
+      font-weight: 700;
+
+      cursor: pointer;
+    }
+
+
+    .action-btn:hover {
+
+      background: #f5f1ea;
+    }
+
+
+    .action-btn:disabled {
+
+      opacity: 0.4;
+
+      cursor: not-allowed;
+    }
+
+
+    /* 手機 */
+
     @media (max-width: 760px) {
+
       .app {
+
         grid-template-columns: 1fr;
       }
 
+      .result-area {
+
+        min-height: 180px;
+      }
+
       .number-circle {
-        width: 180px;
-        height: 180px;
-        font-size: 78px;
+
+        width: 110px;
+
+        height: 110px;
+
+        font-size: 48px;
+      }
+
+      .question {
+
+        width: 160px;
+
+        height: 160px;
+
+        font-size: 70px;
       }
 
       .title {
+
         font-size: 26px;
       }
+
     }
+
   </style>
 </head>
 
+
 <body>
+
 
 <div class="app">
 
-  <section class="panel main-panel">
-    <div class="title">六年級座號抽籤</div>
-    <div class="subtitle">1～11 號｜抽過不重複</div>
 
-    <div class="number-circle" id="result">？</div>
+  <!-- 左邊 -->
+
+  <section class="panel main-panel">
+
+    <div class="title">
+      班級座號抽籤
+    </div>
+
+    <div class="subtitle">
+      1～11 號｜抽過不重複
+    </div>
+
+
+    <div class="draw-settings">
+
+      <label for="drawCount">
+        這次要抽
+      </label>
+
+      <select id="drawCount">
+
+        <option value="1">1 位</option>
+        <option value="2">2 位</option>
+        <option value="3">3 位</option>
+        <option value="4">4 位</option>
+        <option value="5">5 位</option>
+        <option value="6">6 位</option>
+        <option value="7">7 位</option>
+        <option value="8">8 位</option>
+        <option value="9">9 位</option>
+        <option value="10">10 位</option>
+        <option value="11">11 位</option>
+
+      </select>
+
+    </div>
+
+
+    <div class="result-area" id="resultArea">
+
+      <div class="number-circle question">
+        ？
+      </div>
+
+    </div>
+
 
     <button class="draw-btn" id="drawBtn">
-      🎲 抽一位
+
+      🎲 開始抽籤
+
     </button>
 
+
     <div class="status" id="status">
+
       目前有 11 位可以抽
+
     </div>
 
+
     <div class="hint">
+
       僅使用座號，不顯示學生姓名
+
     </div>
+
   </section>
 
 
+
+  <!-- 右邊 -->
+
   <div class="side">
 
+
     <section class="panel">
+
       <div class="section-title">
-        <span>尚未抽到</span>
-        <span id="remainingCount">11 人</span>
+
+        <span>
+          尚未抽到
+        </span>
+
+        <span id="remainingCount">
+          11 人
+        </span>
+
       </div>
 
-      <div class="number-list" id="remainingList"></div>
+
+      <div
+        class="number-list"
+        id="remainingList">
+      </div>
+
     </section>
 
 
+
     <section class="panel">
+
       <div class="section-title">
-        <span>已抽過</span>
-        <span id="drawnCount">0 人</span>
+
+        <span>
+          已抽過
+        </span>
+
+        <span id="drawnCount">
+          0 人
+        </span>
+
       </div>
 
-      <div class="number-list" id="drawnList">
+
+      <div
+        class="number-list"
+        id="drawnList">
+
         尚未有人被抽到
+
       </div>
+
     </section>
+
 
 
     <div class="actions">
-      <button class="action-btn" id="putBackBtn" disabled>
-        ↩ 放回上一位
+
+
+      <button
+        class="action-btn"
+        id="putBackBtn"
+        disabled>
+
+        ↩ 放回上一輪
+
       </button>
 
-      <button class="action-btn" id="resetBtn">
+
+      <button
+        class="action-btn"
+        id="resetBtn">
+
         🔄 重新開始
+
       </button>
+
+
     </div>
 
+
   </div>
+
 
 </div>
 
 
+
 <script>
+
 
 const TOTAL = 11;
 
+
 let remaining = [];
+
 let drawn = [];
-let lastDrawn = null;
+
+let lastRound = [];
+
 let isDrawing = false;
 
-const result = document.getElementById("result");
-const drawBtn = document.getElementById("drawBtn");
-const resetBtn = document.getElementById("resetBtn");
-const putBackBtn = document.getElementById("putBackBtn");
 
-const remainingList = document.getElementById("remainingList");
-const drawnList = document.getElementById("drawnList");
 
-const remainingCount = document.getElementById("remainingCount");
-const drawnCount = document.getElementById("drawnCount");
-const status = document.getElementById("status");
+const resultArea =
+document.getElementById("resultArea");
 
+
+const drawBtn =
+document.getElementById("drawBtn");
+
+
+const resetBtn =
+document.getElementById("resetBtn");
+
+
+const putBackBtn =
+document.getElementById("putBackBtn");
+
+
+const drawCount =
+document.getElementById("drawCount");
+
+
+const remainingList =
+document.getElementById("remainingList");
+
+
+const drawnList =
+document.getElementById("drawnList");
+
+
+const remainingCount =
+document.getElementById("remainingCount");
+
+
+const drawnCount =
+document.getElementById("drawnCount");
+
+
+const status =
+document.getElementById("status");
+
+
+
+/* 初始化 */
 
 function initialize() {
+
+
   remaining = [];
 
+
   for (let i = 1; i <= TOTAL; i++) {
+
     remaining.push(i);
+
   }
 
-  drawn = [];
-  lastDrawn = null;
 
-  result.textContent = "？";
+  drawn = [];
+
+  lastRound = [];
+
+
+  resultArea.innerHTML = `
+
+    <div class="number-circle question">
+
+      ？
+
+    </div>
+
+  `;
+
 
   render();
+
 }
 
 
+
+/* 更新畫面 */
+
 function render() {
+
 
   remainingList.innerHTML = "";
 
+
   remaining.forEach(number => {
-    const chip = document.createElement("div");
-    chip.className = "number-chip";
-    chip.textContent = number + "號";
+
+
+    const chip =
+    document.createElement("div");
+
+
+    chip.className =
+    "number-chip";
+
+
+    chip.textContent =
+    number + "號";
+
+
     remainingList.appendChild(chip);
+
+
   });
+
 
 
   drawnList.innerHTML = "";
 
+
   if (drawn.length === 0) {
 
-    drawnList.textContent = "尚未有人被抽到";
+
+    drawnList.textContent =
+    "尚未有人被抽到";
+
 
   } else {
 
+
     drawn.forEach(number => {
 
-      const chip = document.createElement("div");
 
-      chip.className = "number-chip drawn";
+      const chip =
+      document.createElement("div");
 
-      chip.textContent = number + "號";
+
+      chip.className =
+      "number-chip drawn";
+
+
+      chip.textContent =
+      number + "號";
+
 
       drawnList.appendChild(chip);
 
+
     });
+
 
   }
 
 
-  remainingCount.textContent = remaining.length + " 人";
-  drawnCount.textContent = drawn.length + " 人";
+
+  remainingCount.textContent =
+  remaining.length + " 人";
+
+
+  drawnCount.textContent =
+  drawn.length + " 人";
+
 
 
   if (remaining.length === 0) {
 
-    status.textContent = "全部 11 位都抽過囉！";
+
+    status.textContent =
+    "全部 11 位都抽過囉！";
+
 
     drawBtn.disabled = true;
 
+
   } else {
 
-    status.textContent =
-      "目前有 " + remaining.length + " 位可以抽";
 
-    drawBtn.disabled = isDrawing;
+    status.textContent =
+    "目前有 " +
+    remaining.length +
+    " 位可以抽";
+
+
+    drawBtn.disabled =
+    isDrawing;
+
 
   }
+
 
 
   putBackBtn.disabled =
-    lastDrawn === null || isDrawing;
+  lastRound.length === 0 ||
+  isDrawing;
 
 }
 
 
-function drawNumber() {
 
-  if (remaining.length === 0 || isDrawing) {
+/* 抽籤 */
+
+function drawNumbers() {
+
+
+  if (
+    remaining.length === 0 ||
+    isDrawing
+  ) {
+
     return;
+
   }
+
+
+
+  let amount =
+  parseInt(drawCount.value);
+
+
+
+  /* 如果想抽的人數比剩下的人多 */
+
+  if (amount > remaining.length) {
+
+
+    alert(
+      "目前只剩下 " +
+      remaining.length +
+      " 位尚未抽到喔！"
+    );
+
+
+    return;
+
+  }
+
+
 
   isDrawing = true;
 
+
   drawBtn.disabled = true;
+
   putBackBtn.disabled = true;
 
-  let count = 0;
+  drawCount.disabled = true;
 
-  const animation = setInterval(() => {
 
-    const randomPreview =
-      remaining[
-        Math.floor(Math.random() * remaining.length)
-      ];
 
-    result.textContent = randomPreview;
+  let animationCount = 0;
 
-    count++;
 
-    if (count >= 18) {
+
+  const animation =
+  setInterval(() => {
+
+
+    resultArea.innerHTML = "";
+
+
+    /* 動畫預覽 */
+
+    let preview =
+    [...remaining];
+
+
+    preview.sort(
+      () => Math.random() - 0.5
+    );
+
+
+    preview
+    .slice(0, amount)
+    .forEach(number => {
+
+
+      const circle =
+      document.createElement("div");
+
+
+      circle.className =
+      "number-circle";
+
+
+      circle.textContent =
+      number;
+
+
+      resultArea.appendChild(circle);
+
+
+    });
+
+
+
+    animationCount++;
+
+
+
+    if (animationCount >= 18) {
+
 
       clearInterval(animation);
 
-      const randomIndex =
-        Math.floor(Math.random() * remaining.length);
 
-      const selected =
-        remaining.splice(randomIndex, 1)[0];
+      finishDraw(amount);
 
-      drawn.push(selected);
-
-      lastDrawn = selected;
-
-      result.textContent = selected;
-
-      isDrawing = false;
-
-      render();
 
     }
 
-  }, 60);
+
+  }, 70);
 
 }
 
 
-function putBack() {
 
-  if (lastDrawn === null) {
-    return;
+/* 正式決定結果 */
+
+function finishDraw(amount) {
+
+
+  lastRound = [];
+
+
+  for (
+    let i = 0;
+    i < amount;
+    i++
+  ) {
+
+
+    const randomIndex =
+    Math.floor(
+      Math.random() *
+      remaining.length
+    );
+
+
+    const selected =
+    remaining.splice(
+      randomIndex,
+      1
+    )[0];
+
+
+    lastRound.push(selected);
+
+    drawn.push(selected);
+
+
   }
 
-  const index =
-    drawn.lastIndexOf(lastDrawn);
 
-  if (index !== -1) {
 
-    drawn.splice(index, 1);
+  resultArea.innerHTML = "";
 
-  }
 
-  remaining.push(lastDrawn);
+  lastRound.forEach(number => {
 
-  remaining.sort((a, b) => a - b);
 
-  lastDrawn = null;
+    const circle =
+    document.createElement("div");
 
-  result.textContent = "？";
+
+    circle.className =
+    "number-circle";
+
+
+    circle.textContent =
+    number;
+
+
+    resultArea.appendChild(circle);
+
+
+  });
+
+
+
+  isDrawing = false;
+
+  drawCount.disabled = false;
+
 
   render();
 
 }
 
 
+
+/* 放回上一輪 */
+
+function putBack() {
+
+
+  if (
+    lastRound.length === 0 ||
+    isDrawing
+  ) {
+
+    return;
+
+  }
+
+
+
+  lastRound.forEach(number => {
+
+
+    const index =
+    drawn.indexOf(number);
+
+
+    if (index !== -1) {
+
+      drawn.splice(index, 1);
+
+    }
+
+
+    remaining.push(number);
+
+
+  });
+
+
+
+  remaining.sort(
+    (a, b) => a - b
+  );
+
+
+
+  lastRound = [];
+
+
+  resultArea.innerHTML = `
+
+    <div class="number-circle question">
+
+      ？
+
+    </div>
+
+  `;
+
+
+  render();
+
+}
+
+
+
+/* 按鈕事件 */
+
+
 drawBtn.addEventListener(
   "click",
-  drawNumber
+  drawNumbers
 );
 
 
@@ -441,9 +1018,12 @@ putBackBtn.addEventListener(
 );
 
 
+
 initialize();
 
+
 </script>
+
 
 </body>
 </html>
